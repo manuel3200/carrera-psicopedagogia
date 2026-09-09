@@ -43,16 +43,16 @@ export default config({
         heroDescripcion: fields.text({
           label: 'Descripción de Portada',
           multiline: true,
-          defaultValue: 'Portal central que nucleariza las diferentes materias, aulas virtuales y herramientas digitales de la carrera. Accedé a cada cátedra con su repositorio en Google Drive, panel CMS y procesador de autoevaluaciones.',
+          defaultValue: 'Espacio independiente creado por un estudiante con el fin de facilitar y organizar el acceso a los archivos, bibliografía y recursos de las diversas cátedras de la carrera.',
         }),
         footerDescripcion: fields.text({
           label: 'Descripción de Pie de Página',
           multiline: true,
-          defaultValue: 'Portal central institucional que articula la red de cátedras y recursos digitales de la carrera.',
+          defaultValue: 'Espacio colaborativo creado por un estudiante para nuclear y facilitar los recursos de las cátedras de la carrera.',
         }),
         footerCopy: fields.text({
           label: 'Texto de Copyright',
-          defaultValue: '© 2026 Portal de la Carrera de Psicopedagogía. Red Jamstack 100% gratuita.',
+          defaultValue: '© 2026 Portal de la Carrera de Psicopedagogía. Proyecto independiente y gratuito.',
         }),
       },
     }),
