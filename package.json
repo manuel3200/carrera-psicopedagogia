@@ -1,0 +1,27 @@
+{
+  "name": "carrera-psicopedagogia",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.2.0",
+    "@astrojs/react": "^4.2.0",
+    "@keystatic/astro": "^6.0.0",
+    "@keystatic/core": "^0.6.9",
+    "astro": "^5.4.2",
+    "picomatch": "^4.0.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.7.3"
+  },
+  "description": "Portal Central de la Carrera de Psicopedagogia (Astro + Keystatic + Cloudflare)"
+}

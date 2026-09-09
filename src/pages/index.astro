@@ -1,33 +1,51 @@
+---
+import '../styles/styles.css';
+import carreraData from '../data/carrera/index.json';
+import catedrasData from '../data/catedras/index.json';
+
+const nombreCarrera = carreraData.nombreCarrera || "Carrera de Psicopedagogía";
+const subtitulo = carreraData.subtitulo || "Portal Académico & Red Central de Cátedras";
+const cicloLectivo = carreraData.cicloLectivo || "Ciclo Lectivo 2026";
+const heroTitulo = carreraData.heroTitulo || "Red de Cátedras de Psicopedagogía";
+const heroDescripcion = carreraData.heroDescripcion || "Portal central que nucleariza las diferentes materias, aulas virtuales y herramientas digitales de la carrera. Accedé a cada cátedra con su repositorio en Google Drive, panel CMS y procesador de autoevaluaciones.";
+const footerDescripcion = carreraData.footerDescripcion || "Portal central institucional que articula la red de cátedras y recursos digitales de la carrera.";
+const footerCopy = carreraData.footerCopy || "© 2026 Portal de la Carrera de Psicopedagogía. Red Jamstack 100% gratuita.";
+
+const tituloSeccion = catedrasData.tituloSeccion || "Cátedras Integradas";
+const descripcionSeccion = catedrasData.descripcionSeccion || "Seleccioná la materia a la que deseás ingresar. Cada espacio cuenta con su propio repositorio bibliográfico en la nube, panel autogestionable y procesador pedagógico de autoevaluaciones.";
+const listaCatedras = catedrasData.lista || [];
+---
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Portal oficial de la Carrera de Psicopedagogía. Red central de cátedras, recursos de estudio y herramientas pedagógicas." />
-  <title>Portal de Psicopedagogía | Red Central de Cátedras</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <title>{nombreCarrera} | Red Central de Cátedras</title>
 </head>
 <body>
 
   <!-- CABECERA PRINCIPAL -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="index.html" class="brand">
+      <a href="/" class="brand">
         <div class="brand-icon">🧠</div>
         <div class="brand-info">
-          <span class="brand-title">Portal de Psicopedagogía</span>
-          <span class="brand-sub">psp.joif.net • Red Académica Central</span>
+          <span class="brand-title">{nombreCarrera}</span>
+          <span class="brand-sub">psp.joif.net • {subtitulo}</span>
         </div>
       </a>
 
       <button class="mobile-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
 
       <nav class="main-nav">
-        <a href="index.html" class="nav-link active">Inicio</a>
+        <a href="/" class="nav-link active">Inicio</a>
         <a href="#catedras" class="nav-link">🏛️ Cátedras</a>
         <a href="https://evo-1.joif.net" class="nav-link" target="_blank" rel="noopener noreferrer">🌱 Evolutiva 1 ↗</a>
         <a href="https://antro.joif.net" class="nav-link" target="_blank" rel="noopener noreferrer">🏺 Antropología ↗</a>
         <a href="https://evo-1.joif.net/autoevaluacion" class="nav-link nav-link-teacher" target="_blank" rel="noopener noreferrer">📊 Analizador Excel</a>
+        <a href="/keystatic" class="nav-link" style="background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; font-weight:700;">✏️ Admin Keystatic</a>
       </nav>
     </div>
   </header>
@@ -40,12 +58,11 @@
         <span>•</span>
         <span>psp.joif.net</span>
         <span>•</span>
-        <span>Ciclo Lectivo 2026</span>
+        <span>{cicloLectivo}</span>
       </div>
-      <h1 class="hero-title">Red de Cátedras de Psicopedagogía</h1>
+      <h1 class="hero-title">{heroTitulo}</h1>
       <p class="hero-lead">
-        Portal central que nucleariza las diferentes materias, aulas virtuales y herramientas digitales de la carrera. 
-        Accedé a cada cátedra con su repositorio en Google Drive, panel CMS y procesador de autoevaluaciones.
+        {heroDescripcion}
       </p>
       <div class="hero-actions">
         <a href="#catedras" class="btn btn-primary">
@@ -54,74 +71,54 @@
         <a href="https://evo-1.joif.net/autoevaluacion" class="btn btn-teacher" target="_blank" rel="noopener noreferrer">
           <span>📊</span> Analizador de Autoevaluaciones (Docentes) ↗
         </a>
-        <a href="#presentacion" class="btn btn-outline-white">
-          <span>ℹ️</span> Acerca de la Carrera
+        <a href="/keystatic" class="btn btn-outline-white">
+          <span>✏️</span> Administrar en Keystatic CMS
         </a>
       </div>
     </div>
   </section>
 
-  <!-- SECCIÓN CÁTEDRAS DE LA CARRERA -->
+  <!-- SECCIÓN CÁTEDRAS DE LA CARRERA (DINÁMICA DESDE KEYSTATIC) -->
   <section id="catedras" class="section" style="padding-top: 2rem;">
     <div class="container">
       <div class="section-header">
         <span class="section-tag">Red de Aulas y Materias</span>
-        <h2 class="section-title">Cátedras Integradas</h2>
+        <h2 class="section-title">{tituloSeccion}</h2>
         <p class="section-desc">
-          Seleccioná la materia a la que deseás ingresar. Cada espacio cuenta con su propio repositorio bibliográfico en la nube, panel autogestionable y procesador pedagógico de autoevaluaciones.
+          {descripcionSeccion}
         </p>
       </div>
 
       <div class="roles-grid" style="margin-top: 0; margin-bottom: 3.5rem;">
-        <!-- Cátedra 1: Psicología Evolutiva 1 -->
-        <div class="role-card" style="border-top: 5px solid #3b82f6;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-            <div class="role-icon" style="margin-bottom: 0;">🌱</div>
-            <span style="font-size: 0.78rem; font-weight: 700; color: #1d4ed8; background: #eff6ff; padding: 3px 10px; border-radius: 9999px; border: 1px solid #bfdbfe;">evo-1.joif.net</span>
+        {listaCatedras.map((catedra) => (
+          <div class="role-card" style={`border-top: 5px solid ${catedra.colorBorde || '#3b82f6'};`}>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+              <div class="role-icon" style="margin-bottom: 0;">{catedra.icono || '📖'}</div>
+              <span style="font-size: 0.78rem; font-weight: 700; color: #1d4ed8; background: #eff6ff; padding: 3px 10px; border-radius: 9999px; border: 1px solid #bfdbfe;">
+                {catedra.subdominio || 'joif.net'}
+              </span>
+            </div>
+            <h3 class="role-title">{catedra.nombre}</h3>
+            <p class="role-desc">
+              {catedra.descripcion}
+            </p>
+            <ul class="role-features">
+              {catedra.caracteristica1 && <li>{catedra.caracteristica1}</li>}
+              {catedra.caracteristica2 && <li>{catedra.caracteristica2}</li>}
+              {catedra.caracteristica3 && <li>{catedra.caracteristica3}</li>}
+            </ul>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.5rem;">
+              <a href={catedra.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1;">
+                Ingresar a la Cátedra ↗
+              </a>
+              {catedra.urlAnalizador && (
+                <a href={catedra.urlAnalizador} target="_blank" rel="noopener noreferrer" class="btn btn-teacher" title="Analizador de Excel">
+                  📊 Analizador
+                </a>
+              )}
+            </div>
           </div>
-          <h3 class="role-title">Psicología Evolutiva 1</h3>
-          <p class="role-desc">
-            Estudio comprensivo de las transformaciones psicológicas del ser humano a lo largo del ciclo vital: desde la etapa prenatal hasta la niñez y sus dimensiones afectivo-cognitivas.
-          </p>
-          <ul class="role-features">
-            <li>📁 Repositorio oficial de la materia en Google Drive.</li>
-            <li>📊 Analizador de autoevaluaciones integrado.</li>
-            <li>✏️ Panel CMS Keystatic para gestión docente.</li>
-          </ul>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.5rem;">
-            <a href="https://evo-1.joif.net" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1;">
-              Ingresar a la Cátedra ↗
-            </a>
-            <a href="https://evo-1.joif.net/autoevaluacion" target="_blank" rel="noopener noreferrer" class="btn btn-teacher" title="Analizador de Excel">
-              📊 Analizador
-            </a>
-          </div>
-        </div>
-
-        <!-- Cátedra 2: Antropología -->
-        <div class="role-card" style="border-top: 5px solid #d97706;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-            <div class="role-icon" style="margin-bottom: 0;">🏺</div>
-            <span style="font-size: 0.78rem; font-weight: 700; color: #b45309; background: #fffbeb; padding: 3px 10px; border-radius: 9999px; border: 1px solid #fde68a;">antro.joif.net</span>
-          </div>
-          <h3 class="role-title">Antropología</h3>
-          <p class="role-desc">
-            Estudio sistemático de la condición humana, la diversidad cultural, los procesos de simbolización y las matrices socio-culturales que configuran a los sujetos y sus comunidades.
-          </p>
-          <ul class="role-features">
-            <li>📁 Repositorio oficial de la materia en Google Drive.</li>
-            <li>📊 Analizador de autoevaluaciones integrado.</li>
-            <li>✏️ Panel CMS Keystatic para gestión docente.</li>
-          </ul>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.5rem;">
-            <a href="https://antro.joif.net" target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1; background-color: #9a3412;">
-              Ingresar a la Cátedra ↗
-            </a>
-            <a href="https://antro.joif.net/autoevaluacion" target="_blank" rel="noopener noreferrer" class="btn btn-teacher" title="Analizador de Excel">
-              📊 Analizador
-            </a>
-          </div>
-        </div>
+        ))}
 
         <!-- Próxima Cátedra -->
         <div class="role-card" style="border-top: 5px solid #94a3b8; border-style: dashed;">
@@ -139,9 +136,9 @@
             <li>Ecosistema docente unificado.</li>
           </ul>
           <div style="margin-top: 1.5rem;">
-            <span class="btn" style="width: 100%; background: #e2e8f0; color: #475569; cursor: default;">
-              Ecosistema en expansión
-            </span>
+            <a href="/keystatic" class="btn" style="width: 100%; background: #e2e8f0; color: #475569; text-align:center;">
+              Administrar Cátedras en Keystatic ✏️
+            </a>
           </div>
         </div>
       </div>
@@ -194,30 +191,31 @@
         <div class="brand">
           <div class="brand-icon">🧠</div>
           <div class="brand-info">
-            <span class="brand-title">Portal de Psicopedagogía</span>
+            <span class="brand-title">{nombreCarrera}</span>
             <span class="brand-sub">psp.joif.net</span>
           </div>
         </div>
         <p class="footer-text">
-          Portal central institucional que articula la red de cátedras y recursos digitales de la carrera.
+          {footerDescripcion}
         </p>
       </div>
 
       <div class="footer-links-group">
         <h4 class="footer-heading">Cátedras Integradas</h4>
         <ul class="footer-links">
-          <li><a href="https://evo-1.joif.net" target="_blank" rel="noopener noreferrer">🌱 Psicología Evolutiva 1</a></li>
-          <li><a href="https://antro.joif.net" target="_blank" rel="noopener noreferrer">🏺 Antropología</a></li>
+          {listaCatedras.map(c => (
+            <li><a href={c.url} target="_blank" rel="noopener noreferrer">{c.icono || '📖'} {c.nombre}</a></li>
+          ))}
           <li><a href="https://evo-1.joif.net/autoevaluacion" target="_blank" rel="noopener noreferrer">📊 Analizador de Autoevaluaciones</a></li>
+          <li><a href="/keystatic">✏️ Admin Keystatic</a></li>
         </ul>
       </div>
     </div>
 
     <div class="container footer-bottom">
-      <p>© 2026 Portal de Psicopedagogía. Red Académica Jamstack 100% gratuita.</p>
+      <p>{footerCopy}</p>
     </div>
   </footer>
 
-  <script src="assets/js/main.js"></script>
 </body>
 </html>

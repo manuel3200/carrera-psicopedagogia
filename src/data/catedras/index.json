@@ -1,0 +1,30 @@
+{
+  "tituloSeccion": "Cátedras Integradas",
+  "descripcionSeccion": "Seleccioná la materia a la que deseás ingresar. Cada espacio cuenta con su propio repositorio bibliográfico en la nube, panel autogestionable y procesador pedagógico de autoevaluaciones.",
+  "lista": [
+    {
+      "nombre": "Psicología Evolutiva 1",
+      "url": "https://evo-1.joif.net",
+      "subdominio": "evo-1.joif.net",
+      "icono": "🌱",
+      "colorBorde": "#3b82f6",
+      "descripcion": "Estudio comprensivo de las transformaciones psicológicas del ser humano a lo largo del ciclo vital: desde la etapa prenatal hasta la niñez y sus dimensiones afectivo-cognitivas.",
+      "caracteristica1": "📁 Repositorio oficial en Google Drive.",
+      "caracteristica2": "📊 Analizador de autoevaluaciones integrado.",
+      "caracteristica3": "✏️ Panel CMS Keystatic para gestión docente.",
+      "urlAnalizador": "https://evo-1.joif.net/autoevaluacion"
+    },
+    {
+      "nombre": "Antropología",
+      "url": "https://antro.joif.net",
+      "subdominio": "antro.joif.net",
+      "icono": "🏺",
+      "colorBorde": "#d97706",
+      "descripcion": "Estudio sistemático de la condición humana, la diversidad cultural, los procesos de simbolización y las matrices socio-culturales que configuran a los sujetos y sus comunidades.",
+      "caracteristica1": "📁 Repositorio oficial en Google Drive.",
+      "caracteristica2": "📊 Analizador de autoevaluaciones integrado.",
+      "caracteristica3": "✏️ Panel CMS Keystatic para gestión docente.",
+      "urlAnalizador": "https://antro.joif.net/autoevaluacion"
+    }
+  ]
+}

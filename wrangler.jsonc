@@ -1,8 +1,9 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "carrera-psicopedagogia",
   "compatibility_date": "2026-09-08",
+  "main": "dist/_worker.js/index.js",
   "assets": {
-    "directory": "./"
+    "directory": "./dist",
+    "binding": "ASSETS"
   }
 }
