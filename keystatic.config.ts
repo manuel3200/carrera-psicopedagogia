@@ -11,7 +11,7 @@ export default config({
         kind: 'local',
       },
   cloud: {
-    project: 'psi-evo-1/psp',
+    project: 'psi-evo-1/carrera-psicopedagogia',
   },
   ui: {
     brand: {
