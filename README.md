@@ -1,13 +1,13 @@
-# Portal Web de la Cátedra de Psicopedagogía
+# Portal Web de la Carrera de Psicopedagogía
 
-Plataforma estática institucional, modular y 100% gratuita para la cátedra de Psicopedagogía, optimizada para desplegarse en **Cloudflare Pages**.
+Plataforma estática institucional, modular y 100% gratuita para la Carrera de Psicopedagogía, optimizada para desplegarse en **Cloudflare Pages**.
 
 ---
 
 ## 📁 Estructura del Proyecto
 
 ```
-catedra-psicopedagogia/
+carrera-psicopedagogia/
 ├── index.html              # Portada: Bienvenida, presentación institucional y accesos por rol
 ├── materiales.html         # Material de estudio: Bibliografía Unidades 1 a 4 con buscador en vivo
 ├── profesores.html         # Portal Docente: Tutorial paso a paso + Acceso a autoevaluacion.juanconnect.online
@@ -46,22 +46,22 @@ Luego abrí en tu navegador: `http://localhost:8080`.
 Tenés dos opciones sencillas y gratuitas:
 
 ### Opción A: Con la línea de comandos (Wrangler)
-1. Abrí la terminal dentro de esta carpeta (`f:\nuevometodoclaro\catedra-psicopedagogia`).
+1. Abrí la terminal dentro de esta carpeta (`f:\nuevometodoclaro\carrera-psicopedagogia`).
 2. Iniciá sesión en Cloudflare (solo la primera vez):
    ```bash
    npx wrangler login
    ```
 3. Desplegá el sitio web:
    ```bash
-   npx wrangler pages deploy . --project-name=catedra-psicopedagogia
+   npx wrangler pages deploy . --project-name=carrera-psicopedagogia
    ```
-4. ¡Listo! Cloudflare te devolverá una URL pública con HTTPS gratuito (ejemplo: `https://catedra-psicopedagogia.pages.dev`).
+4. ¡Listo! Cloudflare te devolverá una URL pública con HTTPS gratuito (ejemplo: `https://carrera-psicopedagogia.pages.dev`).
 
 ### Opción B: Desde el panel web de Cloudflare (sin comandos)
 1. Entrá a [dash.cloudflare.com](https://dash.cloudflare.com/) con tu cuenta gratuita.
 2. Andá a **Workers & Pages** -> **Create application** -> pestaña **Pages** -> **Upload assets**.
-3. Asignale el nombre `catedra-psicopedagogia`.
-4. Arrastrá la carpeta `catedra-psicopedagogia` y hacé clic en **Deploy site**.
+3. Asignale el nombre `carrera-psicopedagogia`.
+4. Arrastrá la carpeta `carrera-psicopedagogia` y hacé clic en **Deploy site**.
 
 ---
 
