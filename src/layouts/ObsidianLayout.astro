@@ -123,6 +123,7 @@ const {
         if (backdrop) backdrop.classList.toggle('active', isOpen);
       } else {
         const isCollapsed = sidebar.classList.toggle('collapsed');
+        if (folderBtn) folderBtn.classList.toggle('active', !isCollapsed);
         localStorage.setItem('obsidian-sidebar-collapsed', isCollapsed ? 'true' : 'false');
       }
     }
@@ -137,6 +138,7 @@ const {
     if (sidebar && window.innerWidth > 768) {
       if (localStorage.getItem('obsidian-sidebar-collapsed') === 'true') {
         sidebar.classList.add('collapsed');
+        if (folderBtn) folderBtn.classList.remove('active');
       }
     }
 
