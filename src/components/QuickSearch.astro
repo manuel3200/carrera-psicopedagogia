@@ -283,4 +283,10 @@ const materias = getAllMaterias().map(m => ({
 
   const ribbonSearchBtn = document.getElementById('ribbon-search-btn');
   if (ribbonSearchBtn) ribbonSearchBtn.addEventListener('click', () => openSearch());
+
+  const topbarSearchBtn = document.getElementById('topbar-search-btn');
+  if (topbarSearchBtn) topbarSearchBtn.addEventListener('click', () => openSearch());
+
+  const heroSearchTrigger = document.getElementById('hero-search-trigger');
+  if (heroSearchTrigger) heroSearchTrigger.addEventListener('click', () => openSearch());
 </script>

@@ -31,57 +31,68 @@ const {
   <!-- Top Navigation Header -->
   <header class="vault-topbar">
     <div class="topbar-left">
-      <button class="topbar-btn" id="mobile-sidebar-toggle" title="Abrir explorador" aria-label="Abrir explorador">
+      <button class="topbar-btn" id="sidebar-toggle-btn" title="Abrir o cerrar explorador (Ctrl+B)" aria-label="Abrir o cerrar explorador">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       </button>
 
+      <!-- Brand Title -->
+      <a href="/" class="topbar-brand" title="Inicio - Vault Psicopedagogía">
+        <span class="topbar-brand-icon">🏛️</span>
+        <span class="topbar-brand-text">Psicopedagogía</span>
+      </a>
+
       <!-- Breadcrumbs -->
-      <nav class="topbar-breadcrumbs" aria-label="Ruta de navegación">
-        <a href="/" class="breadcrumb-link">psicopedagogia</a>
-        {breadcrumbs.map(b => (
-          <>
-            <span class="breadcrumb-sep">/</span>
-            {b.url ? (
-              <a href={b.url} class="breadcrumb-link">{b.label}</a>
-            ) : (
-              <span class="breadcrumb-current">{b.label}</span>
-            )}
-          </>
-        ))}
-      </nav>
+      {breadcrumbs.length > 0 && (
+        <nav class="topbar-breadcrumbs" aria-label="Ruta de navegación">
+          {breadcrumbs.map(b => (
+            <>
+              <span class="breadcrumb-sep">/</span>
+              {b.url ? (
+                <a href={b.url} class="breadcrumb-link">{b.label}</a>
+              ) : (
+                <span class="breadcrumb-current">{b.label}</span>
+              )}
+            </>
+          ))}
+        </nav>
+      )}
     </div>
 
     <!-- Center Search Trigger -->
     <div class="topbar-center">
-      <div class="topbar-search-trigger" id="topbar-search-btn">
+      <button class="topbar-search-trigger" id="topbar-search-btn" type="button" aria-label="Buscar en el Vault">
         <div class="search-placeholder">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-          <span>Buscar materia, apunte o correlativa...</span>
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span class="search-text-full">Buscar materia, apunte o correlativa...</span>
+          <span class="search-text-mobile">Buscar...</span>
         </div>
-        <kbd>Ctrl K</kbd>
-      </div>
+        <kbd class="search-kbd">Ctrl K</kbd>
+      </button>
     </div>
 
     <!-- Right Actions -->
     <div class="topbar-right">
       <a href="/docentes" class="topbar-link" title="Espacio Docente y Contacto">
-        <span>👨‍🏫</span>
-        <span style="display:none; @media(min-width:640px){display:inline;}">Docentes</span>
+        <span class="link-icon">👨‍🏫</span>
+        <span class="link-label">Docentes</span>
       </a>
       <a href="/analizador" class="topbar-link" title="Analizador Excel de Autoevaluaciones">
-        <span>📊</span>
-        <span style="display:none; @media(min-width:640px){display:inline;}">Analizador</span>
+        <span class="link-icon">📊</span>
+        <span class="link-label">Analizador</span>
       </a>
       <a href="/correlatividades" class="topbar-link" title="Mapa del Plan de Estudios">
-        <span>🔗</span>
-        <span>Plan 18/13</span>
+        <span class="link-icon">🔗</span>
+        <span class="link-label">Plan 18/13</span>
       </a>
       <a href="/keystatic" class="topbar-link admin-btn" title="Panel CMS Keystatic">
-        <span>✏️</span>
-        <span>CMS</span>
+        <span class="link-icon">✏️</span>
+        <span class="link-label">CMS</span>
       </a>
     </div>
   </header>
+
+  <!-- Mobile Backdrop Overlay -->
+  <div id="sidebar-backdrop" class="sidebar-backdrop" aria-hidden="true"></div>
 
   <!-- Main Grid Layout -->
   <div class="vault-layout">
@@ -96,33 +107,70 @@ const {
   <QuickSearch />
 
   <script>
-    // Sidebar toggle for desktop & mobile
+    // Unified Sidebar Controller for Desktop & Mobile
     const sidebar = document.getElementById('obsidian-sidebar');
     const collapseBtn = document.getElementById('sidebar-collapse-btn');
-    const mobileToggle = document.getElementById('mobile-sidebar-toggle');
+    const toggleBtn = document.getElementById('sidebar-toggle-btn');
+    const folderBtn = document.getElementById('ribbon-folder-btn');
     const mobileClose = document.getElementById('mobile-sidebar-close');
+    const backdrop = document.getElementById('sidebar-backdrop');
     const topbarSearch = document.getElementById('topbar-search-btn');
 
-    if (collapseBtn && sidebar) {
-      collapseBtn.addEventListener('click', () => {
-        sidebar.classList.toggle('collapsed');
-      });
+    function toggleSidebar() {
+      if (!sidebar) return;
+      if (window.innerWidth <= 768) {
+        const isOpen = sidebar.classList.toggle('mobile-open');
+        if (backdrop) backdrop.classList.toggle('active', isOpen);
+      } else {
+        const isCollapsed = sidebar.classList.toggle('collapsed');
+        localStorage.setItem('obsidian-sidebar-collapsed', isCollapsed ? 'true' : 'false');
+      }
     }
 
-    if (mobileToggle && sidebar) {
-      mobileToggle.addEventListener('click', () => {
-        sidebar.classList.add('mobile-open');
-      });
+    function closeMobileSidebar() {
+      if (!sidebar) return;
+      sidebar.classList.remove('mobile-open');
+      if (backdrop) backdrop.classList.remove('active');
     }
 
-    if (mobileClose && sidebar) {
-      mobileClose.addEventListener('click', () => {
-        sidebar.classList.remove('mobile-open');
-      });
+    // Restore desktop collapsed state from localStorage
+    if (sidebar && window.innerWidth > 768) {
+      if (localStorage.getItem('obsidian-sidebar-collapsed') === 'true') {
+        sidebar.classList.add('collapsed');
+      }
     }
 
-    if (topbarSearch && window.openQuickSearch) {
-      topbarSearch.addEventListener('click', () => window.openQuickSearch());
+    // Event listeners
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleSidebar);
+    if (collapseBtn) collapseBtn.addEventListener('click', toggleSidebar);
+    if (folderBtn) folderBtn.addEventListener('click', toggleSidebar);
+    if (mobileClose) mobileClose.addEventListener('click', closeMobileSidebar);
+    if (backdrop) backdrop.addEventListener('click', closeMobileSidebar);
+
+    // Close drawer when clicking a materia link on mobile
+    document.querySelectorAll('.tree-file-link, .tree-extra-link').forEach(el => {
+      el.addEventListener('click', () => {
+        if (window.innerWidth <= 768) closeMobileSidebar();
+      });
+    });
+
+    // Keyboard shortcut Ctrl+B / Cmd+B for sidebar toggle
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+        e.preventDefault();
+        toggleSidebar();
+      }
+    });
+
+    // Trigger Search Modal
+    function handleOpenSearch() {
+      if (typeof (window as any).openQuickSearch === 'function') {
+        (window as any).openQuickSearch();
+      }
+    }
+
+    if (topbarSearch) {
+      topbarSearch.addEventListener('click', handleOpenSearch);
     }
   </script>
 </body>
