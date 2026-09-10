@@ -33,16 +33,16 @@ const materiasData = materias.map(m => ({
 }));
 
 const years = [
-  { ano: '1', label: '1º Año', subtitle: 'Primer Año de la Licenciatura', materias: materiasData.filter(m => m.ano === '1') },
-  { ano: '2', label: '2º Año', subtitle: 'Segundo Año de la Licenciatura', materias: materiasData.filter(m => m.ano === '2') },
-  { ano: '3', label: '3º Año', subtitle: 'Tercer Año de la Licenciatura', materias: materiasData.filter(m => m.ano === '3') },
+  { ano: '1', label: '1º Año', subtitle: 'Primer Año de la Carrera', materias: materiasData.filter(m => m.ano === '1') },
+  { ano: '2', label: '2º Año', subtitle: 'Segundo Año de la Carrera', materias: materiasData.filter(m => m.ano === '2') },
+  { ano: '3', label: '3º Año', subtitle: 'Tercer Año de la Carrera', materias: materiasData.filter(m => m.ano === '3') },
   { ano: '4', label: '4º Año', subtitle: 'Cuarto Año y Prácticas Profesionales', materias: materiasData.filter(m => m.ano === '4') },
 ];
 ---
 
 <ObsidianLayout
   title="Simulador de Cursada y Exámenes Finales (Res. 18/13)"
-  description="Herramienta interactiva para calcular qué materias podés cursar y qué exámenes finales podés rendir según tu avance académico en la Licenciatura en Psicopedagogía."
+  description="Herramienta interactiva para calcular qué materias podés cursar y qué exámenes finales podés rendir según tu avance académico en la Carrera de Psicopedagogía."
   breadcrumbs={[
     { label: 'Régimen de Correlatividades', url: '/correlatividades' },
     { label: 'Simulador Interactivo' }
@@ -327,7 +327,7 @@ const years = [
     <section id="print-sheet" class="print-sheet" aria-hidden="true">
       <header class="print-header">
         <div class="print-header-main">
-          <h1>Licenciatura en Psicopedagogía</h1>
+          <h1>Carrera de Psicopedagogía</h1>
           <p>Plan de Estudios — Resolución N° 18/13 • Ficha Oficial de Situación Académica</p>
         </div>
         <div class="print-header-meta">
