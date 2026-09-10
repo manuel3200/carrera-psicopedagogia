@@ -200,10 +200,15 @@ const cuatriLabel = materia.cuatrimestre === 'anual' ? 'Anual' : `${materia.cuat
     <!-- Footer Edit Link -->
     <footer class="materia-footer">
       <div class="footer-edit-box">
-        <span>¿Sos docente o querés actualizar los links de esta materia?</span>
-        <a href="/keystatic" class="btn-edit-keystatic">
-          Editar en Keystatic CMS ✏️
-        </a>
+        <span>¿Sos docente de esta materia o querés acercar programas, bibliografía o correcciones?</span>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="/docentes" class="btn-edit-keystatic" style="background:rgba(139,92,246,0.15); color:#c4b5fd; border:1px solid rgba(139,92,246,0.3);">
+            👨‍🏫 Espacio Docente & Contacto
+          </a>
+          <a href="/keystatic" class="btn-edit-keystatic">
+            Editar en Keystatic CMS ✏️
+          </a>
+        </div>
       </div>
     </footer>
   </article>

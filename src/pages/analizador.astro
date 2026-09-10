@@ -300,8 +300,8 @@
   <div class="app-logo">
     <span>📊</span>
     Analizador de Autoevaluaciones
-    <a href="/docentes" style="text-decoration:none; color:var(--text-2); font-size:12px; font-weight: 500; margin-left:14px; padding: 4px 10px; border-radius: 6px; background: var(--surface-alt); border: 1px solid var(--border);">← Volver a Cátedra</a>
-    <a href="https://psp.joif.net" style="text-decoration:none; color:var(--text-2); font-size:12px; font-weight: 500; margin-left:8px; padding: 4px 10px; border-radius: 6px; background: var(--surface-alt); border: 1px solid var(--border);">🏛️ Portal Carrera (PSP)</a>
+    <a href="/docentes" style="text-decoration:none; color:var(--text-2); font-size:12px; font-weight: 600; margin-left:14px; padding: 5px 12px; border-radius: 6px; background: rgba(139,92,246,0.1); color: #5b21b6; border: 1px solid rgba(139,92,246,0.25);">👨‍🏫 Guía Docente & Contacto</a>
+    <a href="/" style="text-decoration:none; color:var(--text-2); font-size:12px; font-weight: 500; margin-left:8px; padding: 5px 12px; border-radius: 6px; background: var(--surface-alt); border: 1px solid var(--border);">🏛️ Portal Psicopedagogía</a>
   </div>
   <button class="upload-btn-header" onclick="document.getElementById('fileInput').click()">
     <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 00-.707.293l-4 4a1 1 0 101.414 1.414L9 5.414V13a1 1 0 102 0V5.414l2.293 2.293a1 1 0 001.414-1.414l-4-4A1 1 0 0010 2z"/><path d="M3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/></svg>
@@ -331,6 +331,15 @@
     <p class="hint">Compatible con exportaciones de Google Forms en formato Excel</p>
   </div>
   <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(event)">
+  
+  <div style="margin-top:1.5rem; background:rgba(59,91,219,0.08); border:1px solid rgba(59,91,219,0.25); border-radius:var(--radius); padding:1rem 1.25rem; text-align:left; max-width:520px; width:100%; display:flex; align-items:center; gap:12px;">
+    <span style="font-size:1.8rem; flex-shrink:0;">👨‍🏫</span>
+    <div style="font-size:13px; color:var(--text-2); line-height:1.45;">
+      <strong>¿Sos docente y querés ver cómo descargar el Excel de Google Forms?</strong><br>
+      Consultá la <a href="/docentes" style="color:var(--accent); font-weight:600; text-decoration:underline;">Guía paso a paso y canales directos de contacto con Manuel Ortiz ↗</a>
+    </div>
+  </div>
+
   <div class="format-note">
     <h4>Columnas esperadas en el archivo</h4>
     <ul>
