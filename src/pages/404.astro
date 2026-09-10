@@ -1,0 +1,210 @@
+---
+import ObsidianLayout from '../layouts/ObsidianLayout.astro';
+---
+
+<ObsidianLayout
+  title="404 - Nota o Cátedra no encontrada"
+  description="La página o apunte que buscas no existe o fue movido en el Vault de Psicopedagogía."
+  breadcrumbs={[{ label: '404 - No Encontrado' }]}
+>
+  <div class="error-page-container">
+    <div class="error-card">
+      <div class="error-code-badge">404 • NOT FOUND</div>
+      
+      <div class="error-icon">🔍</div>
+
+      <h1 class="error-title">Esta nota o cátedra no existe en el Vault</h1>
+      
+      <p class="error-desc">
+        La página que intentás abrir no está disponible. Puede que la dirección esté mal escrita o que el contenido haya cambiado de ubicación.
+      </p>
+
+      <div class="error-actions">
+        <button id="error-search-trigger" class="btn-error-search" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Buscar en el Vault</span>
+          <kbd>Ctrl K</kbd>
+        </button>
+
+        <a href="/" class="btn-error-home">
+          <span>🏛️ Volver a la Portada</span>
+        </a>
+
+        <a href="/correlatividades" class="btn-error-plan">
+          <span>🔗 Ver Plan de Estudios</span>
+        </a>
+      </div>
+
+      <div class="error-help-box">
+        <span>¿Buscabas material de una cátedra específica o querés avisar de un enlace roto?</span>
+        <a href="/docentes" class="error-help-link">Ir a Espacio Docente y Contacto ➔</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const searchBtn = document.getElementById('error-search-trigger');
+    if (searchBtn && (window as any).openQuickSearch) {
+      searchBtn.addEventListener('click', () => (window as any).openQuickSearch());
+    }
+  </script>
+</ObsidianLayout>
+
+<style>
+  .error-page-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - var(--header-height) - 6rem);
+    padding: 2rem 1rem;
+  }
+
+  .error-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    border-radius: var(--radius-lg);
+    padding: 3.5rem 2.5rem;
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  }
+
+  .error-code-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    background: rgba(124, 58, 237, 0.12);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 1.25rem;
+  }
+
+  .error-icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .error-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+  }
+
+  .error-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  .error-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .btn-error-search {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: var(--accent-purple);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-error-search:hover {
+    background: var(--accent-purple-dim);
+    transform: translateY(-1px);
+  }
+
+  .btn-error-search kbd {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+  }
+
+  .btn-error-home,
+  .btn-error-plan {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-error-home {
+    background: var(--bg-active);
+    color: var(--text-main);
+    border: 1px solid var(--border-subtle);
+  }
+
+  .btn-error-home:hover {
+    border-color: var(--border-vault);
+    background: var(--bg-hover);
+  }
+
+  .btn-error-plan {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid transparent;
+  }
+
+  .btn-error-plan:hover {
+    color: var(--accent-purple);
+    border-color: var(--border-subtle);
+  }
+
+  .error-help-box {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-vault);
+    font-size: 0.85rem;
+    color: var(--text-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .error-help-link {
+    color: var(--accent-purple);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .error-help-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 600px) {
+    .error-card {
+      padding: 2.5rem 1.5rem;
+    }
+    .error-title {
+      font-size: 1.45rem;
+    }
+  }
+</style>
