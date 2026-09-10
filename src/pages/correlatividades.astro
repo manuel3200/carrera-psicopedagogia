@@ -1,8 +1,20 @@
 ---
 import ObsidianLayout from '../layouts/ObsidianLayout.astro';
-import { getAllMaterias } from '../utils/materias';
+import { getAllMaterias, getSlugForCorrelativa } from '../utils/materias';
 
 const materias = getAllMaterias();
+
+const materiasWithLinks = materias.map(m => ({
+  ...m,
+  paraCursarResolved: m.paraCursar.map(r => ({
+    raw: r,
+    info: getSlugForCorrelativa(r, materias)
+  })),
+  paraRendirResolved: m.paraRendir.map(r => ({
+    raw: r,
+    info: getSlugForCorrelativa(r, materias)
+  }))
+}));
 ---
 
 <ObsidianLayout
@@ -19,13 +31,20 @@ const materias = getAllMaterias();
       </p>
     </header>
 
-    <!-- Filter Buttons -->
-    <div class="filter-row">
-      <button class="filter-btn active" data-year="all">Todas las Materias (32)</button>
-      <button class="filter-btn" data-year="1">1º Año (7)</button>
-      <button class="filter-btn" data-year="2">2º Año (7)</button>
-      <button class="filter-btn" data-year="3">3º Año (9)</button>
-      <button class="filter-btn" data-year="4">4º Año (9)</button>
+    <!-- Filter Toolbar: Año + Buscador en Vivo -->
+    <div class="filter-toolbar">
+      <div class="filter-row">
+        <button class="filter-btn active" data-year="all">Todas las Materias (32)</button>
+        <button class="filter-btn" data-year="1">1º Año (7)</button>
+        <button class="filter-btn" data-year="2">2º Año (7)</button>
+        <button class="filter-btn" data-year="3">3º Año (9)</button>
+        <button class="filter-btn" data-year="4">4º Año (9)</button>
+      </div>
+
+      <div class="table-search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="table-search-input" placeholder="Filtrar materia o requisito..." aria-label="Filtrar materias en la tabla" />
+      </div>
     </div>
 
     <!-- Table of Correlatividades -->
@@ -43,50 +62,73 @@ const materias = getAllMaterias();
             </tr>
           </thead>
           <tbody>
-            {materias.map(m => (
-              <tr class="table-row" data-year={m.ano}>
-                <td class="td-num">
-                  <span class="num-tag">{m.numero}</span>
-                </td>
-                <td class="td-name">
-                  <div class="name-box">
-                    <span class="m-icon">{m.icono || '📚'}</span>
-                    <div>
-                      <a href={`/m/${m.slug}`} class="m-link">{m.nombre}</a>
-                      {m.driveUrl && <span class="drive-indicator" title="Tiene Google Drive vinculado">📁</span>}
+            {materiasWithLinks.map(m => {
+              const searchable = `${m.numero} ${m.nombre} ${m.ano} ${m.paraCursar.join(' ')} ${m.paraRendir.join(' ')}`;
+              return (
+                <tr class="table-row" data-year={m.ano} data-search={searchable}>
+                  <td class="td-num">
+                    <span class="num-tag">{m.numero}</span>
+                  </td>
+                  <td class="td-name">
+                    <div class="name-box">
+                      <span class="m-icon">{m.icono || '📚'}</span>
+                      <div>
+                        <a href={`/m/${m.slug}`} class="m-link">{m.nombre}</a>
+                        {m.driveUrl && <span class="drive-indicator" title="Tiene Google Drive vinculado">📁</span>}
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td class="td-loc">
-                  <span class="loc-tag">{m.ano}º Año • {m.cuatrimestre}º C</span>
-                </td>
-                <td class="td-cursar">
-                  {m.paraCursar.length === 0 ? (
-                    <span class="libre-tag">— Libre —</span>
-                  ) : (
-                    <ul class="req-chips">
-                      {m.paraCursar.map(r => (
-                        <li class="req-chip chip-r">{r}</li>
-                      ))}
-                    </ul>
-                  )}
-                </td>
-                <td class="td-rendir">
-                  {m.paraRendir.length === 0 ? (
-                    <span class="libre-tag">— Libre —</span>
-                  ) : (
-                    <ul class="req-chips">
-                      {m.paraRendir.map(r => (
-                        <li class="req-chip chip-a">{r}</li>
-                      ))}
-                    </ul>
-                  )}
-                </td>
-                <td class="td-action">
-                  <a href={`/m/${m.slug}`} class="view-btn">Ver ↗</a>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td class="td-loc">
+                    <span class="loc-tag">{m.ano}º Año • {m.cuatrimestre}º C</span>
+                  </td>
+                  <td class="td-cursar">
+                    {m.paraCursarResolved.length === 0 ? (
+                      <span class="libre-tag">— Libre —</span>
+                    ) : (
+                      <ul class="req-chips">
+                        {m.paraCursarResolved.map(req => (
+                          <li class="req-chip chip-r">
+                            {req.info.slug ? (
+                              <a href={`/m/${req.info.slug}`} class="req-chip-link" title={`Ver correlativa: ${req.info.name}`}>
+                                <span class="req-chip-status">{req.info.status === 'A' ? '(A)' : '(R)'}</span>
+                                <span class="req-chip-name">{req.info.name}</span>
+                                <span class="req-chip-arrow">↗</span>
+                              </a>
+                            ) : (
+                              <span class="req-chip-plain">{req.raw}</span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </td>
+                  <td class="td-rendir">
+                    {m.paraRendirResolved.length === 0 ? (
+                      <span class="libre-tag">— Libre —</span>
+                    ) : (
+                      <ul class="req-chips">
+                        {m.paraRendirResolved.map(req => (
+                          <li class="req-chip chip-a">
+                            {req.info.slug ? (
+                              <a href={`/m/${req.info.slug}`} class="req-chip-link" title={`Ver correlativa: ${req.info.name}`}>
+                                <span class="req-chip-status">(A)</span>
+                                <span class="req-chip-name">{req.info.name}</span>
+                                <span class="req-chip-arrow">↗</span>
+                              </a>
+                            ) : (
+                              <span class="req-chip-plain">{req.raw}</span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </td>
+                  <td class="td-action">
+                    <a href={`/m/${m.slug}`} class="view-btn">Ver ↗</a>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
@@ -94,24 +136,53 @@ const materias = getAllMaterias();
   </div>
 
   <script>
+    function normalize(str: string) {
+      return (str || '')
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+    }
+
     const filterBtns = document.querySelectorAll('.filter-btn');
+    const searchInput = document.getElementById('table-search-input') as HTMLInputElement;
     const rows = document.querySelectorAll('.table-row');
+
+    let currentYear = 'all';
+    let currentQuery = '';
+
+    function applyFilters() {
+      const q = normalize(currentQuery);
+      rows.forEach(r => {
+        const rowYear = r.getAttribute('data-year');
+        const rowSearch = normalize(r.getAttribute('data-search') || '');
+
+        const matchesYear = currentYear === 'all' || rowYear === currentYear;
+        const matchesQuery = !q || rowSearch.includes(q);
+
+        if (matchesYear && matchesQuery) {
+          (r as HTMLElement).style.display = '';
+        } else {
+          (r as HTMLElement).style.display = 'none';
+        }
+      });
+    }
 
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         filterBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
-        const year = btn.getAttribute('data-year');
-        rows.forEach(r => {
-          if (year === 'all' || r.getAttribute('data-year') === year) {
-            (r as HTMLElement).style.display = '';
-          } else {
-            (r as HTMLElement).style.display = 'none';
-          }
-        });
+        currentYear = btn.getAttribute('data-year') || 'all';
+        applyFilters();
       });
     });
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentQuery = (e.target as HTMLInputElement).value;
+        applyFilters();
+      });
+    }
   </script>
 </ObsidianLayout>
 
@@ -148,10 +219,49 @@ const materias = getAllMaterias();
     max-width: 760px;
   }
 
+  .filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
   .filter-row {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+  }
+
+  .table-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+    color: var(--text-muted);
+    min-width: 250px;
+    transition: border-color 0.15s;
+  }
+
+  .table-search-box:focus-within {
+    border-color: var(--accent-purple);
+    color: var(--text-main);
+  }
+
+  .table-search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-main);
+    font-size: 0.82rem;
+    width: 100%;
+  }
+
+  .table-search-box input::placeholder {
+    color: var(--text-faint);
   }
 
   .filter-btn {
@@ -268,6 +378,36 @@ const materias = getAllMaterias();
     padding: 2px 8px;
     border-radius: 4px;
     display: inline-block;
+    transition: transform 0.1s ease, border-color 0.15s ease;
+  }
+
+  .req-chip:hover {
+    transform: translateX(2px);
+  }
+
+  .req-chip-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .req-chip-link:hover .req-chip-name {
+    text-decoration: underline;
+  }
+
+  .req-chip-status {
+    font-weight: 700;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    opacity: 0.9;
+  }
+
+  .req-chip-arrow {
+    font-size: 0.65rem;
+    opacity: 0.6;
+    margin-left: 2px;
   }
 
   .chip-r {
