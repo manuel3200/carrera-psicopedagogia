@@ -322,6 +322,85 @@ const years = [
       <p class="empty-desc">Probá cambiando el término de búsqueda o seleccionando "Todas las Materias".</p>
       <button type="button" class="preset-btn" id="empty-clear-btn">Mostrar Todas las Materias</button>
     </div>
+
+    <!-- Hoja de Impresión Oficial (Solo visible al imprimir con Ctrl+P o Imprimir Ficha) -->
+    <section id="print-sheet" class="print-sheet" aria-hidden="true">
+      <header class="print-header">
+        <div class="print-header-main">
+          <h1>Licenciatura en Psicopedagogía</h1>
+          <p>Plan de Estudios — Resolución N° 18/13 • Ficha Oficial de Situación Académica</p>
+        </div>
+        <div class="print-header-meta">
+          <div>Emisión: <span id="print-date">--/--/----</span></div>
+          <div>Portal: <strong>psp.joif.net/simulador</strong></div>
+        </div>
+      </header>
+
+      <div class="print-summary-box">
+        <div class="print-metric">
+          <span class="print-metric-num" id="print-stat-pct">0%</span>
+          <span class="print-metric-lbl">Avance Carrera</span>
+        </div>
+        <div class="print-metric">
+          <span class="print-metric-num"><span id="print-stat-a">0</span>/32</span>
+          <span class="print-metric-lbl">Aprobadas</span>
+        </div>
+        <div class="print-metric">
+          <span class="print-metric-num"><span id="print-stat-r">0</span>/32</span>
+          <span class="print-metric-lbl">Regularizadas</span>
+        </div>
+        <div class="print-metric">
+          <span class="print-metric-num" id="print-stat-c">0</span>
+          <span class="print-metric-lbl">Habilitadas Cursar</span>
+        </div>
+        <div class="print-metric">
+          <span class="print-metric-num" id="print-stat-f">0</span>
+          <span class="print-metric-lbl">Listas para Final</span>
+        </div>
+      </div>
+
+      <div class="print-next-grid">
+        <div class="print-next-col">
+          <div class="print-next-title">
+            <span>🚀 Asignaturas Habilitadas para Cursar</span>
+            <span id="print-badge-count-cursar" class="print-pill-sub"></span>
+          </div>
+          <div id="print-list-cursar" class="print-chips-container">
+            <!-- Dinámico -->
+          </div>
+        </div>
+        <div class="print-next-col">
+          <div class="print-next-title">
+            <span>🎓 Exámenes Finales Habilitados para Rendir</span>
+            <span id="print-badge-count-rendir" class="print-pill-sub"></span>
+          </div>
+          <div id="print-list-rendir" class="print-chips-container">
+            <!-- Dinámico -->
+          </div>
+        </div>
+      </div>
+
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th class="col-num">Nº</th>
+            <th class="col-ano">Año/C.</th>
+            <th class="col-nombre">Asignatura / Cátedra</th>
+            <th class="col-estado">Mi Estado</th>
+            <th class="col-cond">Condición Cursada</th>
+            <th class="col-final">Condición Examen Final</th>
+          </tr>
+        </thead>
+        <tbody id="print-table-body">
+          <!-- 32 filas generadas dinámicamente -->
+        </tbody>
+      </table>
+
+      <footer class="print-footer">
+        <span>Ficha de seguimiento orientativa generada por el Simulador de Correlatividades PSP (Resolución 18/13).</span>
+        <span>Documento oficial de planificación • psp.joif.net</span>
+      </footer>
+    </section>
   </div>
 </ObsidianLayout>
 
@@ -378,6 +457,11 @@ const years = [
     let countCanCursar = 0;
     let countCanRendir = 0;
     let countBlocked = 0;
+
+    // Acumuladores para la Ficha de Impresión Oficial (A4)
+    const printRows = [];
+    const printCursarList = [];
+    const printRendirList = [];
 
     // Primer paso: calcular conteos básicos
     materiasData.forEach(m => {
@@ -506,6 +590,53 @@ const years = [
       card.setAttribute('data-can-rendir', canRendir ? 'true' : 'false');
       card.setAttribute('data-blocked', isBlocked ? 'true' : 'false');
 
+      // Generar filas y listas para la Ficha Oficial de Impresión
+      if (canCursar) {
+        printCursarList.push('<strong>[' + String(m.numero).padStart(2, '0') + ']</strong> ' + m.nombre + ' <span class="print-pill-sub">(' + m.ano + 'º Año)</span>');
+      }
+      if (canRendir) {
+        printRendirList.push('<strong>[' + String(m.numero).padStart(2, '0') + ']</strong> ' + m.nombre + ' <span class="print-pill-sub">(' + m.ano + 'º Año)</span>');
+      }
+
+      let estadoBadge = '';
+      let cursadaText = '';
+      let finalBadge = '';
+
+      if (myStatus === 'A') {
+        estadoBadge = '<span class="print-status-badge print-status-a">APROBADA</span>';
+        cursadaText = '<span class="print-ok-text">Acreditada</span>';
+        finalBadge = '<span class="print-ok-text">Acreditado</span>';
+      } else if (myStatus === 'R') {
+        estadoBadge = '<span class="print-status-badge print-status-r">REGULAR</span>';
+        cursadaText = '<span class="print-ok-text">Regularizada</span>';
+        if (canRendir) {
+          finalBadge = '<span class="print-ready-text">✓ Habilitado</span>';
+        } else {
+          const missingNames = missingRendir.map(mr => mr.name).join(', ');
+          finalBadge = '<span class="print-wait-text">Falta final: ' + (missingNames || 'correlativas') + '</span>';
+        }
+      } else {
+        estadoBadge = '<span class="print-status-badge print-status-p">PENDIENTE</span>';
+        if (canCursar) {
+          cursadaText = '<span class="print-ready-text">✓ Habilitada</span>';
+        } else {
+          const missingNames = missingCursar.map(mc => mc.name).join(', ');
+          cursadaText = '<span class="print-locked-text">Falta: ' + (missingNames || 'correlativas') + '</span>';
+        }
+        finalBadge = '<span class="print-muted-text">Requiere regularizar</span>';
+      }
+
+      printRows.push(`
+        <tr>
+          <td class="col-num">${String(m.numero).padStart(2, '0')}</td>
+          <td class="col-ano">${m.ano}º · ${m.cuatrimestre}</td>
+          <td class="col-nombre">${m.nombre}</td>
+          <td class="col-estado">${estadoBadge}</td>
+          <td class="col-cond">${cursadaText}</td>
+          <td class="col-final">${finalBadge}</td>
+        </tr>
+      `);
+
       // Construir el HTML del banner evaluativo
       if (myStatus === 'A') {
         evalBox.innerHTML = `
@@ -629,6 +760,56 @@ const years = [
         yearStatEl.textContent = yearA + '/' + ms.length + ' aprobadas';
       }
     });
+
+    // Actualizar Ficha de Impresión Oficial (A4)
+    const printDateEl = document.getElementById('print-date');
+    if (printDateEl) {
+      const now = new Date();
+      printDateEl.textContent = now.toLocaleDateString('es-AR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    const printPctEl = document.getElementById('print-stat-pct');
+    if (printPctEl) printPctEl.textContent = percentA + '%';
+
+    const printAEl = document.getElementById('print-stat-a');
+    if (printAEl) printAEl.textContent = countA;
+
+    const printREl = document.getElementById('print-stat-r');
+    if (printREl) printREl.textContent = countR;
+
+    const printCEl = document.getElementById('print-stat-c');
+    if (printCEl) printCEl.textContent = countCanCursar;
+
+    const printFEl = document.getElementById('print-stat-f');
+    if (printFEl) printFEl.textContent = countCanRendir;
+
+    const printBadgeCursar = document.getElementById('print-badge-count-cursar');
+    if (printBadgeCursar) printBadgeCursar.textContent = countCanCursar + ' disp.';
+
+    const printBadgeRendir = document.getElementById('print-badge-count-rendir');
+    if (printBadgeRendir) printBadgeRendir.textContent = countCanRendir + ' disp.';
+
+    const printListCursarEl = document.getElementById('print-list-cursar');
+    if (printListCursarEl) {
+      printListCursarEl.innerHTML = printCursarList.length > 0
+        ? printCursarList.map(item => '<div class="print-item-chip">• ' + item + '</div>').join('')
+        : '<div class="print-empty-note">No hay materias pendientes habilitadas para cursar.</div>';
+    }
+
+    const printListRendirEl = document.getElementById('print-list-rendir');
+    if (printListRendirEl) {
+      printListRendirEl.innerHTML = printRendirList.length > 0
+        ? printRendirList.map(item => '<div class="print-item-chip">• ' + item + '</div>').join('')
+        : '<div class="print-empty-note">No hay exámenes finales pendientes listos para rendir.</div>';
+    }
+
+    const printTableBody = document.getElementById('print-table-body');
+    if (printTableBody) {
+      printTableBody.innerHTML = printRows.join('');
+    }
 
     // Reaplicar filtros y búsqueda
     applyFilters();
@@ -795,6 +976,11 @@ const years = [
     document.getElementById('kpi-card-bloqueadas')?.addEventListener('click', () => {
       const tab = document.querySelector('.filter-tab[data-filter="bloqueadas"]');
       if (tab) tab.click();
+    });
+
+    // Asegurar que la ficha de impresión se actualice siempre antes de imprimir
+    window.addEventListener('beforeprint', () => {
+      evaluateAll();
     });
 
     // Evaluación inicial
@@ -1742,44 +1928,353 @@ const years = [
     }
   }
 
-  /* Modo Impresión */
+  /* Ocultar Ficha de Impresión en pantalla */
+  .print-sheet {
+    display: none;
+  }
+
+  /* Modo Impresión Oficial (Ficha Académica A4 Ultra-Compacta en 1-2 páginas) */
   @media print {
+    @page {
+      size: A4 portrait;
+      margin: 8mm 7mm 8mm 7mm;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box !important;
+      text-shadow: none !important;
+    }
+
+    :global(html),
+    :global(body) {
+      background: #ffffff !important;
+      color: #0f172a !important;
+      font-size: 8pt !important;
+      line-height: 1.25 !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Ocultar toda la interfaz web interactiva */
     :global(.vault-topbar),
     :global(#obsidian-sidebar),
     :global(.sidebar-ribbon),
+    :global(#sidebar-backdrop),
+    :global(.quick-search-modal),
+    :global(.vault-footer),
+    .sim-header,
+    .sim-dashboard,
     .sim-actions-toolbar,
     .sim-filter-toolbar,
-    .status-selector-row {
+    .sim-years-container,
+    .sim-empty-state {
       display: none !important;
     }
 
+    :global(.vault-layout),
+    :global(.vault-main),
     .simulador-page {
-      padding: 0;
-      max-width: 100%;
-      color: #000 !important;
+      display: block !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      border: none !important;
+      background: #ffffff !important;
     }
 
-    .sim-dashboard {
-      border: 1px solid #ccc;
-      box-shadow: none;
-      background: #fff;
-      color: #000;
+    /* Mostrar Hoja de Impresión Oficial */
+    .print-sheet {
+      display: block !important;
+      width: 100% !important;
+      color: #0f172a !important;
     }
 
-    .cards-grid {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
+    /* Cabecera Oficial */
+    .print-header {
+      border-bottom: 2px solid #0f172a;
+      padding-bottom: 5px;
+      margin-bottom: 7px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
     }
 
-    .sim-materia-card {
-      border: 1px solid #ddd;
+    .print-header-main h1 {
+      font-size: 13pt;
+      font-weight: 800;
+      margin: 0 0 2px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #0f172a;
+    }
+
+    .print-header-main p {
+      font-size: 8pt;
+      margin: 0;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .print-header-meta {
+      text-align: right;
+      font-size: 7.2pt;
+      color: #64748b;
+      line-height: 1.3;
+    }
+
+    .print-header-meta strong {
+      color: #0f172a;
+    }
+
+    /* Resumen Ejecutivo (KPI Box) */
+    .print-summary-box {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 5px 8px;
+      margin-bottom: 7px;
       page-break-inside: avoid;
-      background: #fff !important;
-      color: #000 !important;
+      break-inside: avoid;
     }
 
-    .card-title-link, .year-heading {
-      color: #000 !important;
+    .print-metric {
+      text-align: center;
+      border-right: 1px solid #e2e8f0;
+      padding: 0 4px;
+    }
+
+    .print-metric:last-child {
+      border-right: none;
+    }
+
+    .print-metric-num {
+      display: block;
+      font-size: 11pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+
+    .print-metric-lbl {
+      display: block;
+      font-size: 6.8pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #64748b;
+      margin-top: 1px;
+    }
+
+    /* Próximas Habilitaciones Académicas (2 columnas) */
+    .print-next-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-bottom: 7px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .print-next-col {
+      border: 1px solid #cbd5e1;
+      border-radius: 4px;
+      padding: 5px 7px;
+      background: #ffffff;
+    }
+
+    .print-next-title {
+      font-size: 7.4pt;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: #1e293b;
+      margin: 0 0 4px 0;
+      padding-bottom: 3px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .print-chips-container {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .print-item-chip {
+      font-size: 7pt;
+      line-height: 1.25;
+      color: #1e293b;
+    }
+
+    .print-pill-sub {
+      color: #64748b;
+      font-size: 6.5pt;
+    }
+
+    .print-empty-note {
+      font-size: 7pt;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* Tabla Oficial de las 32 Asignaturas */
+    .print-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 7.2pt;
+      line-height: 1.15;
+      margin-bottom: 5px;
+    }
+
+    .print-table thead {
+      display: table-header-group;
+    }
+
+    .print-table th {
+      background: #1e293b !important;
+      color: #ffffff !important;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 6.7pt;
+      letter-spacing: 0.3px;
+      padding: 3.5px 5px;
+      text-align: left;
+      border: 1px solid #0f172a;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .print-table td {
+      padding: 2.2px 5px;
+      border: 1px solid #cbd5e1;
+      vertical-align: middle;
+    }
+
+    .print-table tr:nth-child(even) td {
+      background: #f8fafc;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .print-table tr {
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .col-num {
+      width: 4%;
+      font-weight: 700;
+      text-align: center;
+      color: #475569;
+    }
+
+    .col-ano {
+      width: 9%;
+      font-weight: 600;
+      color: #334155;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .col-nombre {
+      width: 37%;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .col-estado {
+      width: 13%;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .col-cond {
+      width: 18.5%;
+      font-size: 6.8pt;
+      color: #334155;
+    }
+
+    .col-final {
+      width: 18.5%;
+      font-size: 6.8pt;
+      color: #334155;
+    }
+
+    /* Badges de Estado en Impresión */
+    .print-status-badge {
+      display: inline-block;
+      padding: 1px 4px;
+      border-radius: 2px;
+      font-size: 6.2pt;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      text-align: center;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    .print-status-a {
+      background: #dcfce7 !important;
+      color: #14532d !important;
+      border: 1px solid #86efac;
+    }
+
+    .print-status-r {
+      background: #fef3c7 !important;
+      color: #78350f !important;
+      border: 1px solid #fcd34d;
+    }
+
+    .print-status-p {
+      background: #f1f5f9 !important;
+      color: #475569 !important;
+      border: 1px solid #cbd5e1;
+    }
+
+    .print-ok-text {
+      color: #15803d;
+      font-weight: 600;
+    }
+
+    .print-ready-text {
+      color: #166534;
+      font-weight: 700;
+    }
+
+    .print-locked-text {
+      color: #991b1b;
+      font-weight: 500;
+    }
+
+    .print-wait-text {
+      color: #b45309;
+      font-weight: 500;
+    }
+
+    .print-muted-text {
+      color: #94a3b8;
+    }
+
+    /* Pie de Página Oficial */
+    .print-footer {
+      border-top: 1px solid #cbd5e1;
+      padding-top: 4px;
+      margin-top: 6px;
+      font-size: 6.7pt;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      page-break-inside: avoid;
+      break-inside: avoid;
     }
   }
 </style>
