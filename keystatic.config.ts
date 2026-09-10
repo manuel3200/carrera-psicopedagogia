@@ -56,6 +56,52 @@ export default config({
         }),
       },
     }),
+
+    docentes: singleton({
+      label: 'Espacio Docente y Analizador',
+      path: 'src/data/docentes/index',
+      format: { data: 'json' },
+      schema: {
+        badge: fields.text({
+          label: 'Etiqueta Superior',
+          defaultValue: 'ESPACIO PARA EQUIPOS DE CÁTEDRA • SOPORTE Y HERRAMIENTAS',
+        }),
+        titulo: fields.text({
+          label: 'Título Principal',
+          defaultValue: 'Espacio Docente y Centro de Contacto',
+        }),
+        descripcion: fields.text({
+          label: 'Descripción / Presentación',
+          multiline: true,
+          defaultValue: 'Este portal es un proyecto autogestionado por Manuel Ortiz, estudiante de la carrera de Psicopedagogía. Su finalidad es colaborar activamente con los profesores, adscriptos y auxiliares, centralizando el material bibliográfico, facilitando herramientas pedagógicas digitales y brindando un canal ágil para mantener las 32 cátedras actualizadas.',
+        }),
+        whatsappNumero: fields.text({
+          label: 'Número de WhatsApp (con código de país)',
+          defaultValue: '+54 370 502-1874',
+        }),
+        whatsappLink: fields.url({
+          label: 'Enlace Directo de WhatsApp (wa.me)',
+          defaultValue: 'https://wa.me/543705021874?text=Hola%20Manuel%2C%20te%20escribo%20desde%20el%20portal%20psp.joif.net%20para%20acercarte%20datos%20de%20la%20c%C3%A1tedra%3A',
+        }),
+        emailContacto: fields.text({
+          label: 'Correo Electrónico de Contacto',
+          defaultValue: 'manuelortiz1188@gmail.com',
+        }),
+        youtubeUrl: fields.text({
+          label: 'Enlace al Video Tutorial de YouTube (ej: https://www.youtube.com/watch?v=... o https://youtu.be/...)',
+          defaultValue: '',
+        }),
+        youtubeTitulo: fields.text({
+          label: 'Título del Video Tutorial',
+          defaultValue: 'Video Tutorial: Cómo configurar Google Forms y procesar el Excel',
+        }),
+        youtubeDescripcion: fields.text({
+          label: 'Descripción del Video',
+          multiline: true,
+          defaultValue: 'Mirá en este video paso a paso cómo convertir tu formulario en cuestionario, asignar respuestas correctas y procesar las notas al instante en el analizador.',
+        }),
+      },
+    }),
   },
   collections: {
     materias: collection({
