@@ -11,6 +11,9 @@ const materias = getAllMaterias().map(m => ({
   descripcion: m.descripcion || '',
   paraCursar: m.paraCursar || [],
   paraRendir: m.paraRendir || [],
+  docentes: (m.docentes || []).map(d => `${d.nombre} ${d.cargo || ''}`).join(' '),
+  unidades: (m.unidades || []).map(u => `U${u.numero}: ${u.titulo}. ${u.descripcion || ''}`).join(' '),
+  bibliografia: (m.unidades || []).map(u => u.bibliografia || '').filter(Boolean).join(' | '),
 }));
 ---
 
@@ -130,6 +133,28 @@ const materias = getAllMaterias().map(m => ({
     noResults.style.display = 'none';
   }
 
+  function normalize(str) {
+    return (str || '')
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  }
+
+  function extractSnippet(text, term) {
+    if (!text) return '';
+    const normText = normalize(text);
+    const normTerm = normalize(term);
+    const idx = normText.indexOf(normTerm);
+    if (idx === -1) return text.substring(0, 70) + '...';
+    const start = Math.max(0, idx - 20);
+    const end = Math.min(text.length, idx + term.length + 30);
+    let snippet = text.substring(start, end).trim();
+    if (start > 0) snippet = '...' + snippet;
+    if (end < text.length) snippet = snippet + '...';
+    return snippet;
+  }
+
   function renderResults(list) {
     currentResults = list;
     selectedIndex = 0;
@@ -152,6 +177,12 @@ const materias = getAllMaterias().map(m => ({
           <span class="result-title">${m.nombre}</span>
           <span class="result-year">${m.ano}º Año • ${m.cuatrimestre}º C</span>
         </div>
+        ${m.matchContext ? `
+          <div class="result-match-hint">
+            <span class="hint-icon">💡</span>
+            <span class="hint-text">${m.matchContext}</span>
+          </div>
+        ` : ''}
         <p class="result-desc">${m.descripcion ? m.descripcion.substring(0, 110) + '...' : ''}</p>
         ${m.paraCursar && m.paraCursar.length > 0 ? `
           <div class="result-correlat">
@@ -171,13 +202,14 @@ const materias = getAllMaterias().map(m => ({
   }
 
   function handleSearch(query) {
-    const q = query.trim().toLowerCase();
+    const rawQ = query.trim();
+    const q = normalize(rawQ);
     if (!q) {
       showDefaultView();
       return;
     }
 
-    let filtered = allMaterias;
+    let filtered = [];
 
     // Filter syntax: ano:1 or req:
     if (q.startsWith('ano:')) {
@@ -186,20 +218,49 @@ const materias = getAllMaterias().map(m => ({
     } else if (q.startsWith('req:')) {
       const reqQuery = q.replace('req:', '').trim();
       filtered = allMaterias.filter(m =>
-        m.paraCursar.some(r => r.toLowerCase().includes(reqQuery)) ||
-        m.paraRendir.some(r => r.toLowerCase().includes(reqQuery))
+        m.paraCursar.some(r => normalize(r).includes(reqQuery)) ||
+        m.paraRendir.some(r => normalize(r).includes(reqQuery))
       );
     } else {
       filtered = allMaterias.filter(m => {
+        const nameNorm = normalize(m.nombre);
+        const numNorm = normalize(m.numero);
+        const descNorm = normalize(m.descripcion);
+        const reqCursarNorm = m.paraCursar.some(r => normalize(r).includes(q));
+        const reqRendirNorm = m.paraRendir.some(r => normalize(r).includes(q));
+        const docentesNorm = normalize(m.docentes);
+        const unidadesNorm = normalize(m.unidades);
+        const biblioNorm = normalize(m.bibliografia);
+
         return (
-          m.nombre.toLowerCase().includes(q) ||
-          m.numero.includes(q) ||
-          m.descripcion.toLowerCase().includes(q) ||
-          m.paraCursar.some(r => r.toLowerCase().includes(q)) ||
-          m.paraRendir.some(r => r.toLowerCase().includes(q))
+          nameNorm.includes(q) ||
+          numNorm.includes(q) ||
+          descNorm.includes(q) ||
+          reqCursarNorm ||
+          reqRendirNorm ||
+          docentesNorm.includes(q) ||
+          unidadesNorm.includes(q) ||
+          biblioNorm.includes(q)
         );
       });
     }
+
+    // Attach contextual match hint if matched in units/authors/docentes
+    filtered = filtered.map(m => {
+      let matchContext = '';
+      const nameNorm = normalize(m.nombre);
+      const numNorm = normalize(m.numero);
+      if (!nameNorm.includes(q) && !numNorm.includes(q)) {
+        if (m.bibliografia && normalize(m.bibliografia).includes(q)) {
+          matchContext = `Autor / Bibliografía: ${extractSnippet(m.bibliografia, rawQ)}`;
+        } else if (m.docentes && normalize(m.docentes).includes(q)) {
+          matchContext = `Docente: ${extractSnippet(m.docentes, rawQ)}`;
+        } else if (m.unidades && normalize(m.unidades).includes(q)) {
+          matchContext = `Eje Temático: ${extractSnippet(m.unidades, rawQ)}`;
+        }
+      }
+      return { ...m, matchContext };
+    });
 
     renderResults(filtered);
   }

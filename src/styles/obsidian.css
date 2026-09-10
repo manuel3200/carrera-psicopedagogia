@@ -827,6 +827,27 @@ kbd {
   margin-top: 4px;
 }
 
+.result-match-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 4px;
+  padding: 2px 8px;
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  border-radius: 4px;
+  font-size: 0.74rem;
+  color: #c4b5fd;
+}
+
+.result-match-hint .hint-icon {
+  font-size: 0.7rem;
+}
+
+.result-match-hint .hint-text {
+  font-weight: 500;
+}
+
 .search-no-results {
   padding: 2rem;
   text-align: center;
