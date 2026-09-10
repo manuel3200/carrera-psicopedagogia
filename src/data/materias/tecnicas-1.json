@@ -1,0 +1,29 @@
+{
+  "numero": "12",
+  "nombre": "Técnicas de Exploración Psicopedagógica I",
+  "slug": "tecnicas-1",
+  "ano": "2",
+  "cuatrimestre": "2",
+  "icono": "📐",
+  "color": "#c026d3",
+  "descripcion": "Instrumentos y baterías diagnósticas en la clínica psicopedagógica: pruebas proyectivas psicopedagógicas, hora de juego, técnicas gráficas y entrevistas diagnósticas.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicoestadística (Regularizada)",
+    "Psicología Evolutiva I (Regularizada)"
+  ],
+  "paraRendir": [
+    "Psicología General (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "El Proceso Diagnóstico Psicopedagógico",
+      "descripcion": "Entrevistas a padres, motivo de consulta y técnicas proyectivas.",
+      "bibliografia": "Silvia Querol, Jorge Visca y Sara Paín."
+    }
+  ],
+  "enlacesAdicionales": []
+}

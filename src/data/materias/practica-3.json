@@ -1,0 +1,31 @@
+{
+  "numero": "23",
+  "nombre": "Práctica III",
+  "slug": "practica-3",
+  "ano": "3",
+  "cuatrimestre": "2",
+  "icono": "🏫",
+  "color": "#9f1239",
+  "descripcion": "Prácticas de evaluación y diagnóstico psicopedagógico clínico. Administración de baterías y elaboración de informes diagnósticos integrales.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Práctica II (Regularizada)",
+    "Práctica I (Aprobada)"
+  ],
+  "paraRendir": [
+    "Práctica II (Aprobada)",
+    "Didáctica II (Aprobada)",
+    "Técnicas de Exploración Psicopedagógicas I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Diagnóstico Clínico Psicopedagógico",
+      "descripcion": "Elaboración de hipótesis clínicas, devolución y confección de informes.",
+      "bibliografia": "Casuística y modelos de devolución diagnóstica."
+    }
+  ],
+  "enlacesAdicionales": []
+}

@@ -1,0 +1,123 @@
+---
+import { getMateriasTree } from '../utils/materias';
+
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug = '' } = Astro.props;
+const tree = getMateriasTree();
+---
+
+<aside id="obsidian-sidebar" class="obsidian-sidebar" aria-label="Explorador de materias">
+  <!-- Top Icon Ribbon (Estilo Obsidian) -->
+  <div class="sidebar-ribbon">
+    <button class="ribbon-btn active" title="Explorador de Archivos" aria-label="Explorador de Archivos">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/></svg>
+    </button>
+    <button class="ribbon-btn" id="ribbon-search-btn" title="Buscar en el Vault (Ctrl+K)" aria-label="Buscar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+    </button>
+    <a href="/correlatividades" class="ribbon-btn" title="Régimen de Correlatividades" aria-label="Correlatividades">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    </a>
+    <a href="/analizador" class="ribbon-btn" title="Analizador Excel de Autoevaluaciones" aria-label="Analizador Excel">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+    </a>
+    <div class="ribbon-spacer"></div>
+    <button class="ribbon-btn collapse-toggle" id="sidebar-collapse-btn" title="Ocultar barra lateral" aria-label="Colapsar panel">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+  </div>
+
+  <!-- Sidebar File Explorer Body -->
+  <div class="sidebar-content">
+    <div class="vault-header">
+      <div class="vault-info">
+        <span class="vault-badge">VAULT ACADÉMICO</span>
+        <h2 class="vault-title">Palacio Cognitivo</h2>
+        <span class="vault-subtitle">Psicopedagogía • Res. 18/13</span>
+      </div>
+      <button class="mobile-close-btn" id="mobile-sidebar-close" aria-label="Cerrar panel">✕</button>
+    </div>
+
+    <!-- Quick Search Input Trigger -->
+    <div class="sidebar-search-trigger" id="sidebar-quick-search-trigger">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <span>Escriba para buscar...</span>
+      <kbd>Ctrl K</kbd>
+    </div>
+
+    <!-- Hierarchical File Tree -->
+    <nav class="file-tree" aria-label="Árbol de materias">
+      <div class="tree-root-item">
+        <span class="root-folder-icon">📂</span>
+        <span class="root-folder-title">Plan de Estudios (32 Cátedras)</span>
+      </div>
+
+      {tree.map(anoGroup => (
+        <details class="tree-folder tree-ano" open>
+          <summary class="tree-summary">
+            <span class="folder-arrow">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </span>
+            <span class="folder-icon">📁</span>
+            <span class="folder-name">{anoGroup.label}</span>
+            <span class="folder-count">{anoGroup.cuatrimestres.reduce((acc, c) => acc + c.materias.length, 0)}</span>
+          </summary>
+
+          <div class="tree-children">
+            {anoGroup.cuatrimestres.map(cGroup => (
+              <details class="tree-folder tree-cuatri" open>
+                <summary class="tree-summary cuatri-summary">
+                  <span class="folder-arrow">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+                  </span>
+                  <span class="folder-icon">📂</span>
+                  <span class="folder-name">{cGroup.label}</span>
+                  <span class="folder-count">{cGroup.materias.length}</span>
+                </summary>
+
+                <ul class="tree-file-list">
+                  {cGroup.materias.map(m => {
+                    const isActive = m.slug === currentSlug;
+                    return (
+                      <li class="tree-file-item">
+                        <a
+                          href={`/m/${m.slug}`}
+                          class={`tree-file-link ${isActive ? 'active' : ''}`}
+                          title={`${m.numero}. ${m.nombre}`}
+                        >
+                          <span class="file-icon">📄</span>
+                          <span class="file-number">{m.numero}</span>
+                          <span class="file-name">{m.nombre}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </details>
+            ))}
+          </div>
+        </details>
+      ))}
+
+      <!-- Special links at bottom of tree -->
+      <div class="tree-extra-section">
+        <div class="tree-section-divider"></div>
+        <a href="/correlatividades" class="tree-extra-link">
+          <span class="extra-icon">🔗</span>
+          <span>Mapa de Correlatividades</span>
+        </a>
+        <a href="/analizador" class="tree-extra-link">
+          <span class="extra-icon">📊</span>
+          <span>Analizador de Excel</span>
+        </a>
+        <a href="/keystatic" class="tree-extra-link admin-link">
+          <span class="extra-icon">✏️</span>
+          <span>Editar en Keystatic CMS</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</aside>

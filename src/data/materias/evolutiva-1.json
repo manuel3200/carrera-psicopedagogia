@@ -1,0 +1,28 @@
+{
+  "numero": "05",
+  "nombre": "Psicología Evolutiva I",
+  "slug": "evolutiva-1",
+  "ano": "1",
+  "cuatrimestre": "2",
+  "icono": "🌱",
+  "color": "#16a34a",
+  "descripcion": "Transformaciones psicológicas del ser humano desde la etapa prenatal, la primera infancia y la niñez, articulando las dimensiones cognitivas, afectivas y socio-culturales.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "/analizador",
+  "paraCursar": [
+    "Psicología General (Regularizada)"
+  ],
+  "paraRendir": [
+    "Psicología General (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Desarrollo Temprano e Infancia",
+      "descripcion": "Vínculo primordial, apego, desarrollo psicomotor y primeras matrices vinculares.",
+      "bibliografia": "Textos de Freud, Spitz, Bowlby y Winnicott."
+    }
+  ],
+  "enlacesAdicionales": []
+}

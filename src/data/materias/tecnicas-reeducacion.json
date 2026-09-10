@@ -1,0 +1,29 @@
+{
+  "numero": "29",
+  "nombre": "Técnicas de Reeducación",
+  "slug": "tecnicas-reeducacion",
+  "ano": "4",
+  "cuatrimestre": "2",
+  "icono": "🛠️",
+  "color": "#ea580c",
+  "descripcion": "Estrategias de intervención y remediación psicopedagógica para dificultades específicas del aprendizaje: dislexia, discalculia y dispraxias.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Pedagogía Diferenciada (Regularizada)",
+    "Fonoaudiología (Regularizada)"
+  ],
+  "paraRendir": [
+    "Pedagogía Diferenciada (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Intervención en DEA (Dificultades Específicas)",
+      "descripcion": "Materiales y programas neurocognitivos para el afianzamiento del cálculo y la lectura.",
+      "bibliografia": "Guías clínicas de reeducación del aprendizaje."
+    }
+  ],
+  "enlacesAdicionales": []
+}

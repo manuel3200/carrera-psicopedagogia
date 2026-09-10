@@ -1,0 +1,307 @@
+---
+import ObsidianLayout from '../layouts/ObsidianLayout.astro';
+import { getAllMaterias } from '../utils/materias';
+
+const materias = getAllMaterias();
+---
+
+<ObsidianLayout
+  title="Régimen de Correlatividades (Res. 18/13)"
+  description="Plan de estudios oficial y régimen de correlatividades de la Carrera de Psicopedagogía"
+  breadcrumbs={[{ label: 'Régimen de Correlatividades' }]}
+>
+  <div class="correlat-page">
+    <header class="page-header">
+      <span class="header-badge">RESOLUCIÓN 18/13 • PROGRAMA DE TUTORÍA</span>
+      <h1 class="header-title">Régimen Oficial de Correlatividades</h1>
+      <p class="header-desc">
+        Consulta el mapa completo de las 32 cátedras de la carrera. Haz clic en cualquier materia para ingresar a su ficha con el acceso al Google Drive oficial y herramientas de cátedra.
+      </p>
+    </header>
+
+    <!-- Filter Buttons -->
+    <div class="filter-row">
+      <button class="filter-btn active" data-year="all">Todas las Materias (32)</button>
+      <button class="filter-btn" data-year="1">1º Año (7)</button>
+      <button class="filter-btn" data-year="2">2º Año (7)</button>
+      <button class="filter-btn" data-year="3">3º Año (9)</button>
+      <button class="filter-btn" data-year="4">4º Año (9)</button>
+    </div>
+
+    <!-- Table of Correlatividades -->
+    <div class="table-card">
+      <div class="table-responsive">
+        <table class="correlat-table">
+          <thead>
+            <tr>
+              <th style="width: 60px;">Nº</th>
+              <th>Materia / Cátedra</th>
+              <th style="width: 140px;">Ubicación</th>
+              <th>Para Cursar Requiere</th>
+              <th>Para Rendir Requiere</th>
+              <th style="width: 90px;">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {materias.map(m => (
+              <tr class="table-row" data-year={m.ano}>
+                <td class="td-num">
+                  <span class="num-tag">{m.numero}</span>
+                </td>
+                <td class="td-name">
+                  <div class="name-box">
+                    <span class="m-icon">{m.icono || '📚'}</span>
+                    <div>
+                      <a href={`/m/${m.slug}`} class="m-link">{m.nombre}</a>
+                      {m.driveUrl && <span class="drive-indicator" title="Tiene Google Drive vinculado">📁</span>}
+                    </div>
+                  </div>
+                </td>
+                <td class="td-loc">
+                  <span class="loc-tag">{m.ano}º Año • {m.cuatrimestre}º C</span>
+                </td>
+                <td class="td-cursar">
+                  {m.paraCursar.length === 0 ? (
+                    <span class="libre-tag">— Libre —</span>
+                  ) : (
+                    <ul class="req-chips">
+                      {m.paraCursar.map(r => (
+                        <li class="req-chip chip-r">{r}</li>
+                      ))}
+                    </ul>
+                  )}
+                </td>
+                <td class="td-rendir">
+                  {m.paraRendir.length === 0 ? (
+                    <span class="libre-tag">— Libre —</span>
+                  ) : (
+                    <ul class="req-chips">
+                      {m.paraRendir.map(r => (
+                        <li class="req-chip chip-a">{r}</li>
+                      ))}
+                    </ul>
+                  )}
+                </td>
+                <td class="td-action">
+                  <a href={`/m/${m.slug}`} class="view-btn">Ver ↗</a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const rows = document.querySelectorAll('.table-row');
+
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const year = btn.getAttribute('data-year');
+        rows.forEach(r => {
+          if (year === 'all' || r.getAttribute('data-year') === year) {
+            (r as HTMLElement).style.display = '';
+          } else {
+            (r as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+</ObsidianLayout>
+
+<style>
+  .correlat-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-header {
+    border-bottom: 1px solid var(--border-vault);
+    padding-bottom: 1.25rem;
+  }
+
+  .header-badge {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--accent-purple);
+  }
+
+  .header-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 4px 0 8px 0;
+  }
+
+  .header-desc {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 760px;
+  }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+
+  .filter-btn:hover {
+    color: var(--text-main);
+    border-color: var(--accent-purple);
+  }
+
+  .filter-btn.active {
+    background: var(--accent-purple);
+    color: white;
+    border-color: var(--accent-purple);
+    font-weight: 600;
+  }
+
+  .table-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .correlat-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.84rem;
+  }
+
+  .correlat-table th {
+    background: var(--bg-sidebar-ribbon);
+    color: var(--text-faint);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-vault);
+  }
+
+  .correlat-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border-vault);
+    vertical-align: middle;
+  }
+
+  .table-row:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .num-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--bg-vault);
+    color: var(--accent-purple);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+
+  .name-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .m-link {
+    color: var(--text-main);
+    font-weight: 600;
+  }
+
+  .m-link:hover {
+    color: var(--accent-purple-hover);
+    text-decoration: underline;
+  }
+
+  .drive-indicator {
+    font-size: 0.75rem;
+    margin-left: 4px;
+  }
+
+  .loc-tag {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--bg-vault);
+    padding: 3px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .req-chips {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .req-chip {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  .chip-r {
+    background: rgba(245, 158, 11, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+  }
+
+  .chip-a {
+    background: rgba(16, 185, 129, 0.12);
+    color: #34d399;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+  }
+
+  .libre-tag {
+    color: var(--text-faint);
+    font-size: 0.75rem;
+    font-style: italic;
+  }
+
+  .view-btn {
+    font-size: 0.78rem;
+    color: var(--accent-purple-hover);
+    background: var(--bg-vault);
+    border: 1px solid var(--border-vault);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+    transition: all 0.12s;
+  }
+
+  .view-btn:hover {
+    background: var(--accent-purple);
+    color: white;
+    border-color: var(--accent-purple);
+  }
+</style>

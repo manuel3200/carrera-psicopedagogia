@@ -1,0 +1,30 @@
+{
+  "numero": "26",
+  "nombre": "Psicología Institucional y Dinámica de Grupo",
+  "slug": "psicologia-institucional",
+  "ano": "4",
+  "cuatrimestre": "1",
+  "icono": "👥",
+  "color": "#5b21b6",
+  "descripcion": "Análisis institucional, dinámicas grupales, roles y organizaciones complejas. Intervenciones psicopedagógicas comunitarias e institucionales.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Educacional (Aprobada)",
+    "Práctica I (Aprobada)",
+    "Práctica II (Regularizada)"
+  ],
+  "paraRendir": [
+    "Práctica II (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Grupos e Instituciones",
+      "descripcion": "Pichon-Rivière, Bleger, Malfé y el análisis de la cultura institucional.",
+      "bibliografia": "Teoría del grupo operativo y psicología institucional."
+    }
+  ],
+  "enlacesAdicionales": []
+}

@@ -1,0 +1,24 @@
+{
+  "numero": "06",
+  "nombre": "Psicoestadística",
+  "slug": "psicoestadistica",
+  "ano": "1",
+  "cuatrimestre": "2",
+  "icono": "📊",
+  "color": "#d97706",
+  "descripcion": "Herramientas cuantitativas y probabilísticas aplicadas a la investigación psicopedagógica y la psicometría. Distribuciones, muestreo e inferencia estadística.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [],
+  "paraRendir": [],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Estadística Descriptiva e Inferencial",
+      "descripcion": "Medidas de tendencia central, dispersión y pruebas de significación.",
+      "bibliografia": "Guía de trabajos prácticos y fórmulas estadísticas."
+    }
+  ],
+  "enlacesAdicionales": []
+}

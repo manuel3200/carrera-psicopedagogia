@@ -1,0 +1,30 @@
+{
+  "numero": "14",
+  "nombre": "Práctica I",
+  "slug": "practica-1",
+  "ano": "2",
+  "cuatrimestre": "2",
+  "icono": "🏫",
+  "color": "#e11d48",
+  "descripcion": "Primer acercamiento al campo profesional psicopedagógico e institucional. Observación y registro en instituciones educativas y comunitarias.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología General (Aprobada)",
+    "Pedagogía General (Aprobada)"
+  ],
+  "paraRendir": [
+    "Psicología General (Aprobada)",
+    "Pedagogía General (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Observación y Registro en Instituciones",
+      "descripcion": "Metodología de observación institucional y confección de informes de campo.",
+      "bibliografia": "Guía de prácticas pre-profesionales."
+    }
+  ],
+  "enlacesAdicionales": []
+}

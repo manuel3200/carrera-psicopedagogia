@@ -1,0 +1,30 @@
+{
+  "numero": "27",
+  "nombre": "Pedagogía Diferenciada",
+  "slug": "pedagogia-diferenciada",
+  "ano": "4",
+  "cuatrimestre": "1",
+  "icono": "🌈",
+  "color": "#059669",
+  "descripcion": "Educación inclusiva, modelos de atención a la diversidad, necesidades educativas específicas y configuración de apoyos pedagógicos.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicopatología (Regularizada)",
+    "Didáctica III (Regularizada)",
+    "Didáctica II (Aprobada)"
+  ],
+  "paraRendir": [
+    "Didáctica III (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Inclusión Educativa y Proyectos Pedagógicos",
+      "descripcion": "Barreras al aprendizaje, PPI (Proyecto Pedagógico Individual) y adaptaciones.",
+      "bibliografia": "Normativas de inclusión y bibliografía especializada."
+    }
+  ],
+  "enlacesAdicionales": []
+}

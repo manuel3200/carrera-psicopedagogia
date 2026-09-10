@@ -1,0 +1,32 @@
+{
+  "numero": "30",
+  "nombre": "Orientación Escolar y Vocacional",
+  "slug": "orientacion-vocacional",
+  "ano": "4",
+  "cuatrimestre": "2",
+  "icono": "🧭",
+  "color": "#ca8a04",
+  "descripcion": "Procesos de orientación vocacional y ocupacional. Elección de carrera, inserción laboral, proyectos de vida y toma de decisiones en jóvenes y adultos.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Didáctica III (Regularizada)",
+    "Psicología Educacional (Regularizada)",
+    "Práctica III (Regularizada)",
+    "Práctica II (Aprobada)"
+  ],
+  "paraRendir": [
+    "Didáctica III (Aprobada)",
+    "Psicología Educacional (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "El Proceso de Orientación Vocacional",
+      "descripcion": "Modelos actuariales, clínicos y socio-comunitarios. Rodolfo Bohoslavsky y Sergio Rascovan.",
+      "bibliografia": "Bohoslavsky, Rascovan y López Bonelli."
+    }
+  ],
+  "enlacesAdicionales": []
+}

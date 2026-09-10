@@ -1,0 +1,24 @@
+{
+  "numero": "03",
+  "nombre": "Pedagogía General",
+  "slug": "pedagogia-general",
+  "ano": "1",
+  "cuatrimestre": "1",
+  "icono": "📖",
+  "color": "#0891b2",
+  "descripcion": "Análisis del fenómeno educativo, sus fundamentos históricos, sociopolíticos y teóricos. La escuela como institución y las tensiones del acto pedagógico.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [],
+  "paraRendir": [],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Educación y Sociedad",
+      "descripcion": "Teorías de la educación y el rol docente en la contemporaneidad.",
+      "bibliografia": "Programas y guías pedagógicas."
+    }
+  ],
+  "enlacesAdicionales": []
+}

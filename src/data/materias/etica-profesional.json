@@ -1,0 +1,29 @@
+{
+  "numero": "20",
+  "nombre": "Ética Profesional",
+  "slug": "etica-profesional",
+  "ano": "3",
+  "cuatrimestre": "2",
+  "icono": "⚖️",
+  "color": "#b45309",
+  "descripcion": "Deontología psicopedagógica, secreto profesional, dilemas bioéticos y marco legal del ejercicio profesional.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Introducción a la Filosofía (Aprobada)",
+    "Práctica II (Regularizada)"
+  ],
+  "paraRendir": [
+    "Práctica I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Deontología y Responsabilidad Profesional",
+      "descripcion": "Leyes del ejercicio profesional, códigos de ética y consentimiento informado.",
+      "bibliografia": "Legislación vigente y códigos deontológicos."
+    }
+  ],
+  "enlacesAdicionales": []
+}

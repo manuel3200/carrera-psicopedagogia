@@ -1,0 +1,30 @@
+{
+  "numero": "25",
+  "nombre": "Fonoaudiología",
+  "slug": "fonoaudiologia",
+  "ano": "4",
+  "cuatrimestre": "1",
+  "icono": "🗣️",
+  "color": "#0e7490",
+  "descripcion": "Desarrollo del lenguaje verbal, audición, voz y deglución. Trastornos del habla y el lenguaje (dislalias, disfasias, TEL) y su impacto en la lectoescritura.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Anatomía y Fisiología del Sist. Nervioso II (Aprobada)",
+    "Psicología Evolutiva I (Aprobada)"
+  ],
+  "paraRendir": [
+    "Anatomía y Fisiología del Sist. Nervioso II (Aprobada)",
+    "Psicología Evolutiva I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Patologías del Lenguaje y la Comunicación",
+      "descripcion": "Niveles lingüísticos: fonológico, morfosintáctico, semántico y pragmático.",
+      "bibliografia": "Fonoaudiología clínica y neuropsicolingüística."
+    }
+  ],
+  "enlacesAdicionales": []
+}

@@ -1,0 +1,24 @@
+{
+  "numero": "02",
+  "nombre": "Psicología General",
+  "slug": "psicologia-general",
+  "ano": "1",
+  "cuatrimestre": "1",
+  "icono": "🧠",
+  "color": "#2563eb",
+  "descripcion": "Estudio de los procesos psicológicos básicos: percepción, atención, memoria, motivación y emoción. Corrientes históricas y contemporáneas de la psicología.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [],
+  "paraRendir": [],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Procesos Psicológicos Básicos",
+      "descripcion": "Cognición, conducta y subjetividad. Introducción a los sistemas psicológicos.",
+      "bibliografia": "Bibliografía obligatoria de la cátedra."
+    }
+  ],
+  "enlacesAdicionales": []
+}

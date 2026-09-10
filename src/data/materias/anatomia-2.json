@@ -1,0 +1,28 @@
+{
+  "numero": "07",
+  "nombre": "Anatomía y Fisiología del Sistema Nervioso II",
+  "slug": "anatomia-2",
+  "ano": "1",
+  "cuatrimestre": "2",
+  "icono": "🧬",
+  "color": "#ea580c",
+  "descripcion": "Neurobiología de los procesos psicológicos superiores: lenguaje, memoria, atención y funciones ejecutivas. Bases neurobiológicas del aprendizaje.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Anatomía y Fisiología del Sist. Nervioso I (Regularizada)"
+  ],
+  "paraRendir": [
+    "Anatomía y Fisiología del Sist. Nervioso I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Funciones Cerebrales Superiores",
+      "descripcion": "Corteza asociativa, sistemas límbicos y neuroplasticidad.",
+      "bibliografia": "Neurociencias y neurobiología del aprendizaje."
+    }
+  ],
+  "enlacesAdicionales": []
+}

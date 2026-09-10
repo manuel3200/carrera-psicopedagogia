@@ -1,0 +1,28 @@
+{
+  "numero": "22",
+  "nombre": "Antropología",
+  "slug": "antropologia",
+  "ano": "3",
+  "cuatrimestre": "2",
+  "icono": "🏺",
+  "color": "#d97706",
+  "descripcion": "Estudio sistemático de la condición humana, la diversidad cultural, los procesos de simbolización y las matrices socio-culturales que configuran a los sujetos y sus comunidades.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "/analizador",
+  "paraCursar": [
+    "Introducción a la Filosofía (Aprobada)"
+  ],
+  "paraRendir": [
+    "Introducción a la Filosofía (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Cultura, Etnocentrismo y Diversidad",
+      "descripcion": "Etnografía, procesos de alteridad e identidades socioculturales.",
+      "bibliografia": "Lévi-Strauss, Geertz y Boas."
+    }
+  ],
+  "enlacesAdicionales": []
+}

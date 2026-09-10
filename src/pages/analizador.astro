@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizador de Autoevaluaciones - Carrera de Psicopedagogía — Portal Central</title>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style is:inline>
+  :root {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface-alt: #f0f2f5;
+    --text: #1a1d23;
+    --text-2: #5a6072;
+    --text-3: #9099ad;
+    --accent: #3b5bdb;
+    --accent-light: #e8ecfd;
+    --accent-dark: #2a44c4;
+    --green: #2f9e44;
+    --green-light: #ebfbee;
+    --amber: #e67700;
+    --amber-light: #fff3bf;
+    --red: #c92a2a;
+    --red-light: #ffe3e3;
+    --border: rgba(0,0,0,0.07);
+    --border-strong: rgba(0,0,0,0.13);
+    --radius: 10px;
+    --radius-lg: 16px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-logo {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .app-logo span {
+    width: 28px; height: 28px;
+    background: var(--accent);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 14px;
+  }
+  .upload-btn-header {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none; border-radius: var(--radius);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .upload-btn-header:hover { background: var(--accent-dark); }
+  .upload-btn-header svg { width:14px; height:14px; }
+
+  /* UPLOAD SCREEN */
+  #uploadScreen {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: calc(100vh - 56px);
+    padding: 2rem;
+  }
+  .upload-card {
+    background: var(--surface);
+    border: 2px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 4rem 3rem;
+    text-align: center;
+    max-width: 520px;
+    width: 100%;
+    transition: border-color .2s, background .2s;
+    cursor: pointer;
+  }
+  .upload-card.drag-over { border-color: var(--accent); background: var(--accent-light); }
+  .upload-icon {
+    width: 64px; height: 64px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .upload-icon svg { width: 28px; height: 28px; color: var(--accent); }
+  .upload-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
+  .upload-card p { font-size: 14px; color: var(--text-2); margin-bottom: 1.5rem; line-height: 1.5; }
+  .upload-card .hint { font-size: 12px; color: var(--text-3); margin-top: 1rem; }
+  .upload-main-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: var(--radius);
+    font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: background .15s;
+  }
+  .upload-main-btn:hover { background: var(--accent-dark); }
+  #fileInput { display: none; }
+  .format-note {
+    margin-top: 2rem;
+    background: var(--surface-alt);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-align: left;
+    max-width: 520px; width: 100%;
+  }
+  .format-note h4 { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-2); }
+  .format-note ul { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+  .format-note li { font-size: 12px; color: var(--text-3); display: flex; align-items: baseline; gap: 6px; }
+  .format-note li::before { content: "·"; color: var(--accent); font-size: 16px; }
+
+  /* DASHBOARD */
+  #dashboard { display: none; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  .dash-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap; }
+  .dash-title h1 { font-size: 22px; font-weight: 700; }
+  .dash-title p { font-size: 14px; color: var(--text-2); margin-top: 3px; }
+  .dash-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .meta-badge {
+    padding: 4px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 500;
+    background: var(--surface-alt); color: var(--text-2);
+    border: 1px solid var(--border);
+  }
+
+  /* KPI ROW */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .kpi {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .kpi-label { font-size: 12px; color: var(--text-3); font-weight: 500; margin-bottom: 5px; }
+  .kpi-value { font-size: 28px; font-weight: 700; line-height: 1; color: var(--text); }
+  .kpi-value.accent { color: var(--accent); }
+  .kpi-value.green { color: var(--green); }
+  .kpi-value.red { color: var(--red); }
+  .kpi-sub { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+  /* GRID LAYOUT */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media(max-width: 768px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px; font-weight: 600; color: var(--text);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-title .subtitle { font-size: 12px; color: var(--text-3); font-weight: 400; }
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* PREGUNTA TABS */
+  .q-tabs {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    margin-bottom: 1rem;
+  }
+  .q-tab {
+    padding: 5px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-strong);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    background: var(--surface-alt); color: var(--text-2);
+    transition: all .15s;
+  }
+  .q-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .q-tab:hover:not(.active) { background: var(--accent-light); color: var(--accent); border-color: var(--accent); }
+  .q-panel { display: none; }
+  .q-panel.active { display: block; }
+  .correct-answer {
+    background: var(--green-light);
+    border: 1px solid rgba(47,158,68,.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px; color: var(--green);
+    margin-bottom: 10px;
+    display: flex; gap: 8px; align-items: flex-start;
+  }
+  .correct-answer svg { width:15px; height:15px; flex-shrink:0; margin-top:2px; }
+  .pct-bar-row { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+  .pct-bar-bg { flex: 1; height: 10px; background: var(--surface-alt); border-radius: 5px; overflow: hidden; }
+  .pct-bar { height: 100%; border-radius: 5px; transition: width .4s; }
+  .pct-val { font-size: 14px; font-weight: 700; min-width: 40px; }
+  .wrong-answers { margin-top: 12px; }
+  .wrong-answers h4 { font-size: 12px; font-weight: 600; color: var(--text-3); margin-bottom: 6px; text-transform: uppercase; letter-spacing: .04em; }
+  .wrong-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 8px;
+  }
+  .wrong-item:last-child { border-bottom: none; }
+  .wrong-text { color: var(--text-2); flex: 1; }
+  .wrong-count { font-size: 12px; color: var(--text-3); font-weight: 500; white-space: nowrap; }
+
+  /* STUDENT TABLE */
+  .filter-row { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; align-items: center; }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
+    border: 1px solid var(--border-strong); cursor: pointer;
+    background: var(--surface-alt); color: var(--text-2); transition: all .15s;
+  }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .search-box {
+    padding: 5px 10px; border-radius: 6px; border: 1px solid var(--border-strong);
+    font-size: 13px; background: var(--surface); color: var(--text);
+    outline: none; width: 200px;
+  }
+  .search-box:focus { border-color: var(--accent); }
+  .student-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .student-table th {
+    text-align: left; padding: 8px 10px;
+    font-size: 11px; font-weight: 600; color: var(--text-3);
+    border-bottom: 1px solid var(--border-strong);
+    background: var(--surface-alt);
+  }
+  .student-table td { padding: 9px 10px; border-bottom: 1px solid var(--border); }
+  .student-table tr:last-child td { border-bottom: none; }
+  .student-table tr:hover td { background: var(--surface-alt); }
+  .score-pill {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+  }
+  .pill-high { background: var(--green-light); color: var(--green); }
+  .pill-mid { background: var(--amber-light); color: var(--amber); }
+  .pill-low { background: var(--red-light); color: var(--red); }
+
+  /* OBSERVACIONES */
+  .obs-list { display: flex; flex-direction: column; gap: 8px; }
+  .obs-card {
+    background: var(--surface-alt);
+    border-radius: 8px;
+    padding: 10px 14px;
+    border-left: 3px solid var(--accent);
+  }
+  .obs-name { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 2px; }
+  .obs-text { font-size: 13px; color: var(--text-2); line-height: 1.5; }
+
+  /* SCROLL TABLE WRAPPER */
+  .table-scroll { overflow-x: auto; }
+
+  /* LOADING */
+  #loadingScreen {
+    display: none; position: fixed; inset: 0;
+    background: rgba(255,255,255,.9);
+    z-index: 200; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border-strong);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loadingScreen p { font-size: 14px; color: var(--text-2); }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="app-logo">
+    <span>📊</span>
+    Analizador de Autoevaluaciones
+    <a href="/docentes" style="text-decoration:none; color:var(--text-2); font-size:12px; font-weight: 500; margin-left:14px; padding: 4px 10px; border-radius: 6px; background: var(--surface-alt); border: 1px solid var(--border);">← Volver a Cátedra</a>
+    <a href="https://psp.joif.net" style="text-decoration:none; color:var(--text-2); font-size:12px; font-weight: 500; margin-left:8px; padding: 4px 10px; border-radius: 6px; background: var(--surface-alt); border: 1px solid var(--border);">🏛️ Portal Carrera (PSP)</a>
+  </div>
+  <button class="upload-btn-header" onclick="document.getElementById('fileInput').click()">
+    <svg viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 00-.707.293l-4 4a1 1 0 101.414 1.414L9 5.414V13a1 1 0 102 0V5.414l2.293 2.293a1 1 0 001.414-1.414l-4-4A1 1 0 0010 2z"/><path d="M3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/></svg>
+    Cargar nuevo archivo
+  </button>
+</header>
+
+<div id="loadingScreen">
+  <div class="spinner"></div>
+  <p>Procesando el archivo...</p>
+</div>
+
+<!-- UPLOAD SCREEN -->
+<div id="uploadScreen">
+  <div class="upload-card" id="dropZone">
+    <div class="upload-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M9 17v-6m0 0l-2 2m2-2l2 2M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M16 7l-4-4-4 4M12 3v10"/>
+      </svg>
+    </div>
+    <h2>Subí tu archivo de respuestas</h2>
+    <p>Arrastrá y soltá el archivo Excel exportado de Google Forms, o hacé clic para seleccionarlo.</p>
+    <button class="upload-main-btn" onclick="document.getElementById('fileInput').click()">
+      <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm3 2h6v4H7V5zm-1 6h8v2H6v-2z"/></svg>
+      Seleccionar archivo .xlsx
+    </button>
+    <p class="hint">Compatible con exportaciones de Google Forms en formato Excel</p>
+  </div>
+  <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(event)">
+  <div class="format-note">
+    <h4>Columnas esperadas en el archivo</h4>
+    <ul>
+      <li>Marca temporal (fecha/hora de respuesta)</li>
+      <li>Dirección de correo electrónico</li>
+      <li>Puntuación (número)</li>
+      <li>Apellido y Nombre</li>
+      <li>Una columna por cada pregunta (con el texto de la pregunta como encabezado)</li>
+      <li>Columna opcional de consultas/observaciones al final</li>
+    </ul>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="dash-top">
+    <div class="dash-title">
+      <h1 id="dashTitle">Resultados de Autoevaluación</h1>
+      <p id="dashSubtitle"></p>
+    </div>
+    <div class="dash-meta" id="dashMeta"></div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <!-- Charts row -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Distribución de puntajes</div>
+      <div class="chart-wrap" style="height:240px"><canvas id="cDist"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">
+        Aciertos por pregunta
+        <span class="subtitle">% de respuestas correctas</span>
+      </div>
+      <div class="chart-wrap" id="cPreguntaWrap" style="height:240px"><canvas id="cPregunta"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Question detail -->
+  <div class="card">
+    <div class="card-title">Detalle por pregunta</div>
+    <div class="q-tabs" id="qTabs"></div>
+    <div id="qPanels"></div>
+  </div>
+
+  <!-- Students -->
+  <div class="card">
+    <div class="card-title">Estudiantes</div>
+    <div class="filter-row">
+      <button class="filter-btn active" onclick="filterStudents('all',this)">Todos</button>
+      <button class="filter-btn" onclick="filterStudents('high',this)">Alto ≥12</button>
+      <button class="filter-btn" onclick="filterStudents('mid',this)">Medio 9–11</button>
+      <button class="filter-btn" onclick="filterStudents('low',this)">Bajo ≤8</button>
+      <input class="search-box" id="searchBox" type="text" placeholder="Buscar estudiante..." oninput="filterStudents('search',null)">
+    </div>
+    <div class="table-scroll">
+      <table class="student-table" id="studentTable">
+        <thead><tr><th>#</th><th>Nombre</th><th>Puntaje</th><th>Calificación</th></tr></thead>
+        <tbody id="studentTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Observaciones -->
+  <div class="card" id="obsCard" style="display:none">
+    <div class="card-title">Consultas e inquietudes</div>
+    <div class="obs-list" id="obsList"></div>
+  </div>
+</div>
+
+<script is:inline>
+let allStudents = [];
+let allQuestions = [];
+let maxScore = 0;
+let chartDist = null;
+let chartPregunta = null;
+
+// DRAG & DROP
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+dropZone.addEventListener('click', () => document.getElementById('fileInput').click());
+
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (file) processFile(file);
+  e.target.value = '';
+}
+
+function processFile(file) {
+  document.getElementById('loadingScreen').style.display = 'flex';
+  setTimeout(() => {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const wb = XLSX.read(e.target.result, { type: 'array' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+        parseData(data, file.name);
+      } catch(err) {
+        alert('Error al procesar el archivo. Verificá que sea un Excel válido.');
+        console.error(err);
+      }
+      document.getElementById('loadingScreen').style.display = 'none';
+    };
+    reader.readAsArrayBuffer(file);
+  }, 100);
+}
+
+function parseData(data, filename) {
+  const headers = data[0].map(h => String(h).trim());
+  const rows = data.slice(1).filter(r => r.some(c => c !== ''));
+
+  // Detectar columnas clave
+  const iScore = headers.findIndex(h => /puntua|puntaje|score|calif/i.test(h));
+  const iName = headers.findIndex(h => /apellido|nombre|name/i.test(h));
+  const iTime = headers.findIndex(h => /temporal|timestamp|fecha|hora|time/i.test(h));
+  const iObs = headers.findIndex(h => /inquietud|consulta|observaci|comment|nota/i.test(h));
+
+  // Detectar columnas de preguntas (después de nombre, hasta observaciones)
+  const qStart = Math.max(iScore, iName, iTime) + 1;
+  const qEnd = iObs > -1 ? iObs : headers.length;
+  const qCols = [];
+  for (let i = qStart; i < qEnd; i++) {
+    if (headers[i] && headers[i].trim()) qCols.push(i);
+  }
+
+  if (iScore === -1 || iName === -1 || qCols.length === 0) {
+    alert('No se pudieron detectar las columnas necesarias. Verificá que el archivo tenga columnas de Puntuación, Nombre y preguntas.');
+    document.getElementById('loadingScreen').style.display = 'none';
+    return;
+  }
+
+  // Determinar puntaje máximo
+  const scores = rows.map(r => parseFloat(r[iScore]) || 0).filter(s => s > 0);
+  maxScore = qCols.length;
+
+  allStudents = rows.map(r => ({
+    name: String(r[iName] || '').trim(),
+    score: parseFloat(r[iScore]) || 0,
+    answers: qCols.map(c => String(r[c] || '').trim()),
+    obs: iObs > -1 ? String(r[iObs] || '').trim() : ''
+  })).filter(s => s.name);
+
+  // Calcular respuesta correcta por pregunta (la más frecuente)
+  allQuestions = qCols.map((col, qi) => {
+    const qText = headers[col];
+    const answers = allStudents.map(s => s.answers[qi]).filter(a => a);
+    const freq = {};
+    answers.forEach(a => { freq[a] = (freq[a] || 0) + 1; });
+    const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+    const correct = sorted[0] ? sorted[0][0] : '';
+    const correctCount = sorted[0] ? sorted[0][1] : 0;
+    const pct = answers.length ? Math.round(correctCount / answers.length * 100) : 0;
+    const wrong = sorted.slice(1).map(([text, count]) => ({ text, count }));
+    return { qText, correct, pct, correctCount, wrong, total: answers.length };
+  });
+
+  // Fecha del formulario
+  let dateStr = '';
+  if (iTime > -1 && rows[0] && rows[0][iTime]) {
+    const raw = String(rows[0][iTime]);
+    const d = new Date(raw);
+    if (!isNaN(d)) {
+      dateStr = d.toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' });
+    } else {
+      dateStr = raw.substring(0, 10);
+    }
+  }
+
+  renderDashboard(filename, dateStr);
+}
+
+function renderDashboard(filename, dateStr) {
+  document.getElementById('uploadScreen').style.display = 'none';
+  const dash = document.getElementById('dashboard');
+  dash.style.display = 'block';
+
+  const n = allStudents.length;
+  const avg = n ? (allStudents.reduce((s, st) => s + st.score, 0) / n) : 0;
+  const maxS = Math.max(...allStudents.map(s => s.score));
+  const minS = Math.min(...allStudents.map(s => s.score));
+  const passing = allStudents.filter(s => s.score >= maxScore * 0.6).length;
+  const passPct = n ? Math.round(passing / n * 100) : 0;
+
+  // Title
+  const name = filename.replace(/\.(xlsx|xls)$/i, '').replace(/_/g, ' ');
+  document.getElementById('dashTitle').textContent = name.length > 60 ? 'Resultados de Autoevaluación' : name;
+  document.getElementById('dashSubtitle').textContent = dateStr ? `Formulario del ${dateStr}` : '';
+
+  // Meta badges
+  const meta = document.getElementById('dashMeta');
+  meta.innerHTML = `
+    <span class="meta-badge">${n} estudiantes</span>
+    <span class="meta-badge">${maxScore} preguntas</span>
+    ${dateStr ? `<span class="meta-badge">${dateStr}</span>` : ''}
+  `;
+
+  // KPIs
+  document.getElementById('kpiRow').innerHTML = `
+    <div class="kpi"><div class="kpi-label">Promedio general</div><div class="kpi-value accent">${avg.toFixed(1)}</div><div class="kpi-sub">sobre ${maxScore} puntos</div></div>
+    <div class="kpi"><div class="kpi-label">Puntaje máximo</div><div class="kpi-value green">${maxS}</div><div class="kpi-sub">${allStudents.filter(s=>s.score===maxS).length} estudiante(s)</div></div>
+    <div class="kpi"><div class="kpi-label">Puntaje mínimo</div><div class="kpi-value red">${minS}</div><div class="kpi-sub">${allStudents.filter(s=>s.score===minS).length} estudiante(s)</div></div>
+    <div class="kpi"><div class="kpi-label">Aprobación ≥60%</div><div class="kpi-value">${passPct}%</div><div class="kpi-sub">${passing} de ${n} estudiantes</div></div>
+    <div class="kpi"><div class="kpi-label">Mediana</div><div class="kpi-value">${median(allStudents.map(s=>s.score)).toFixed(1)}</div><div class="kpi-sub">punto central</div></div>
+  `;
+
+  renderDistChart();
+  renderPreguntaChart();
+  renderQuestionDetail();
+  renderStudents('all');
+  renderObs();
+}
+
+function median(arr) {
+  const s = [...arr].sort((a,b) => a-b);
+  const m = Math.floor(s.length/2);
+  return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
+}
+
+function renderDistChart() {
+  const scores = allStudents.map(s => s.score);
+  const min = Math.min(...scores); const max = Math.max(...scores);
+  const labels = []; const data = [];
+  for (let i = min; i <= max; i++) {
+    labels.push(String(i));
+    data.push(scores.filter(s => s === i).length);
+  }
+  if (chartDist) chartDist.destroy();
+  chartDist = new Chart(document.getElementById('cDist'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{ label: 'Estudiantes', data, backgroundColor: '#3b5bdb', borderRadius: 5, borderSkipped: false }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#9099ad' }, grid: { color: '#f0f2f5' } },
+        y: { ticks: { color: '#9099ad', stepSize: 1 }, grid: { color: '#f0f2f5' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderPreguntaChart() {
+  const n = allQuestions.length;
+  const wrap = document.getElementById('cPreguntaWrap');
+  const h = Math.max(240, n * 28 + 60);
+  wrap.style.height = h + 'px';
+  if (chartPregunta) chartPregunta.destroy();
+  chartPregunta = new Chart(document.getElementById('cPregunta'), {
+    type: 'bar',
+    data: {
+      labels: allQuestions.map((_, i) => `P${i+1}`),
+      datasets: [{
+        label: '% correctas',
+        data: allQuestions.map(q => q.pct),
+        backgroundColor: allQuestions.map(q => q.pct >= 70 ? '#2f9e44' : q.pct >= 50 ? '#e67700' : '#c92a2a'),
+        borderRadius: 4, borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => `${ctx.raw}% acertaron` } } },
+      scales: {
+        x: { min: 0, max: 100, ticks: { color: '#9099ad', callback: v => v + '%' }, grid: { color: '#f0f2f5' } },
+        y: { ticks: { color: '#9099ad' }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderQuestionDetail() {
+  const tabs = document.getElementById('qTabs');
+  const panels = document.getElementById('qPanels');
+  tabs.innerHTML = ''; panels.innerHTML = '';
+  allQuestions.forEach((q, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = `P${i+1}`;
+    btn.onclick = () => {
+      document.querySelectorAll('.q-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.q-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('qp'+i).classList.add('active');
+    };
+    tabs.appendChild(btn);
+
+    const barColor = q.pct >= 70 ? '#2f9e44' : q.pct >= 50 ? '#e67700' : '#c92a2a';
+    const wrongHtml = q.wrong.slice(0, 5).map(w =>
+      `<div class="wrong-item"><span class="wrong-text">${w.text}</span><span class="wrong-count">${w.count} estudiante${w.count!==1?'s':''}</span></div>`
+    ).join('');
+
+    const panel = document.createElement('div');
+    panel.className = 'q-panel' + (i === 0 ? ' active' : '');
+    panel.id = 'qp' + i;
+    panel.innerHTML = `
+      <div style="font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:10px;line-height:1.5">${q.qText}</div>
+      <div class="correct-answer">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+        <span><strong>Respuesta correcta:</strong> ${q.correct}</span>
+      </div>
+      <div class="pct-bar-row">
+        <div class="pct-bar-bg"><div class="pct-bar" style="width:${q.pct}%;background:${barColor}"></div></div>
+        <span class="pct-val" style="color:${barColor}">${q.pct}%</span>
+        <span style="font-size:12px;color:var(--text-3)">(${q.correctCount} de ${q.total} estudiantes)</span>
+      </div>
+      ${q.wrong.length > 0 ? `<div class="wrong-answers"><h4>Respuestas incorrectas más frecuentes</h4>${wrongHtml}</div>` : ''}
+    `;
+    panels.appendChild(panel);
+  });
+}
+
+let currentFilter = 'all';
+function filterStudents(filter, btn) {
+  if (filter !== 'search') {
+    currentFilter = filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
+  renderStudents(currentFilter);
+}
+
+function renderStudents(filter) {
+  const search = document.getElementById('searchBox').value.toLowerCase();
+  let list = [...allStudents];
+  if (filter === 'high') list = list.filter(s => s.score >= 12);
+  else if (filter === 'mid') list = list.filter(s => s.score >= 9 && s.score <= 11);
+  else if (filter === 'low') list = list.filter(s => s.score <= 8);
+  if (search) list = list.filter(s => s.name.toLowerCase().includes(search));
+  list.sort((a, b) => b.score - a.score);
+
+  const tbody = document.getElementById('studentTbody');
+  tbody.innerHTML = list.map((s, i) => {
+    const pill = s.score >= 12 ? 'pill-high' : s.score >= 9 ? 'pill-mid' : 'pill-low';
+    const label = s.score >= 12 ? 'Alto' : s.score >= 9 ? 'Medio' : 'Bajo';
+    const pct = maxScore ? Math.round(s.score / maxScore * 100) : 0;
+    return `<tr>
+      <td style="color:var(--text-3);font-size:12px">${i+1}</td>
+      <td style="font-weight:500">${s.name}</td>
+      <td><strong>${s.score}</strong><span style="color:var(--text-3);font-size:12px"> / ${maxScore}</span></td>
+      <td><span class="score-pill ${pill}">${label} · ${pct}%</span></td>
+    </tr>`;
+  }).join('');
+}
+
+function renderObs() {
+  const obsCard = document.getElementById('obsCard');
+  const obsList = document.getElementById('obsList');
+  const obs = allStudents.filter(s => s.obs && s.obs.length > 2 && !/^(nan|\.{0,5}|:?\)?|N\/A)$/i.test(s.obs));
+  if (obs.length === 0) { obsCard.style.display = 'none'; return; }
+  obsCard.style.display = 'block';
+  obsList.innerHTML = obs.map(s => `
+    <div class="obs-card">
+      <div class="obs-name">${s.name}</div>
+      <div class="obs-text">${s.obs}</div>
+    </div>
+  `).join('');
+}
+</script>
+</body>
+</html>

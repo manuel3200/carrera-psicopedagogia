@@ -1,221 +1,494 @@
 ---
-import '../styles/styles.css';
+import ObsidianLayout from '../layouts/ObsidianLayout.astro';
+import { getMateriasTree, getAllMaterias } from '../utils/materias';
 import carreraData from '../data/carrera/index.json';
-import catedrasData from '../data/catedras/index.json';
 
-const nombreCarrera = carreraData.nombreCarrera || "Carrera de Psicopedagogía";
-const subtitulo = carreraData.subtitulo || "Portal Académico & Red Central de Cátedras";
-const cicloLectivo = carreraData.cicloLectivo || "Ciclo Lectivo 2026";
-const heroTitulo = carreraData.heroTitulo || "Red de Cátedras de Psicopedagogía";
-const heroDescripcion = carreraData.heroDescripcion || "Portal central que nucleariza las diferentes materias, aulas virtuales y herramientas digitales de la carrera. Accedé a cada cátedra con su repositorio en Google Drive, panel CMS y procesador de autoevaluaciones.";
-const footerDescripcion = carreraData.footerDescripcion || "Portal central institucional que articula la red de cátedras y recursos digitales de la carrera.";
-const footerCopy = carreraData.footerCopy || "© 2026 Portal de la Carrera de Psicopedagogía. Red Jamstack 100% gratuita.";
-
-const tituloSeccion = catedrasData.tituloSeccion || "Cátedras Integradas";
-const descripcionSeccion = catedrasData.descripcionSeccion || "Seleccioná la materia a la que deseás ingresar. Cada espacio cuenta con su propio repositorio bibliográfico en la nube, panel autogestionable y procesador pedagógico de autoevaluaciones.";
-const listaCatedras = catedrasData.lista || [];
+const tree = getMateriasTree();
+const allMaterias = getAllMaterias();
 ---
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Portal oficial de la Carrera de Psicopedagogía. Red central de cátedras, recursos de estudio y herramientas pedagógicas." />
-  <title>{nombreCarrera} | Red Central de Cátedras</title>
-</head>
-<body>
-
-  <!-- CABECERA PRINCIPAL -->
-  <header class="site-header">
-    <div class="container header-inner">
-      <a href="/" class="brand">
-        <div class="brand-icon">🧠</div>
-        <div class="brand-info">
-          <span class="brand-title">{nombreCarrera}</span>
-          <span class="brand-sub">psp.joif.net • {subtitulo}</span>
-        </div>
-      </a>
-
-      <button class="mobile-toggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
-
-      <nav class="main-nav">
-        <a href="/" class="nav-link active">Inicio</a>
-        <a href="#catedras" class="nav-link">🏛️ Cátedras</a>
-        <a href="https://evo-1.joif.net" class="nav-link" target="_blank" rel="noopener noreferrer">🌱 Evolutiva 1 ↗</a>
-        <a href="https://antro.joif.net" class="nav-link" target="_blank" rel="noopener noreferrer">🏺 Antropología ↗</a>
-        <a href="https://evo-1.joif.net/autoevaluacion" class="nav-link nav-link-teacher" target="_blank" rel="noopener noreferrer">📊 Analizador Excel</a>
-        <a href="/keystatic" class="nav-link" style="background:#ede9fe; color:#5b21b6; border:1px solid #ddd6fe; font-weight:700;">✏️ Admin Keystatic</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- HERO / BIENVENIDA -->
-  <section class="hero">
-    <div class="container">
+<ObsidianLayout
+  title="Portal Académico y Red de Cátedras"
+  description={carreraData.heroDescripcion}
+>
+  <div class="home-container">
+    <!-- Hero Banner -->
+    <header class="home-hero">
       <div class="hero-badge">
-        <span>🏛️ Portal Madre Central</span>
+        <span>🏛️ Portal Central</span>
         <span>•</span>
         <span>psp.joif.net</span>
         <span>•</span>
-        <span>{cicloLectivo}</span>
+        <span>Plan Res. 18/13</span>
       </div>
-      <h1 class="hero-title">{heroTitulo}</h1>
-      <p class="hero-lead">
-        {heroDescripcion}
-      </p>
-      <div class="hero-actions">
-        <a href="#catedras" class="btn btn-primary">
-          <span>🏛️</span> Explorar Cátedras de la Carrera
-        </a>
-        <a href="https://evo-1.joif.net/autoevaluacion" class="btn btn-teacher" target="_blank" rel="noopener noreferrer">
-          <span>📊</span> Analizador de Autoevaluaciones (Docentes) ↗
-        </a>
-        <a href="/keystatic" class="btn btn-outline-white">
-          <span>✏️</span> Administrar en Keystatic CMS
-        </a>
-      </div>
-    </div>
-  </section>
 
-  <!-- SECCIÓN CÁTEDRAS DE LA CARRERA (DINÁMICA DESDE KEYSTATIC) -->
-  <section id="catedras" class="section" style="padding-top: 2rem;">
-    <div class="container">
+      <h1 class="hero-title">Red de Cátedras de Psicopedagogía</h1>
+      <p class="hero-desc">
+        {carreraData.heroDescripcion}
+      </p>
+
+      <!-- Prominent Search Bar -->
+      <div class="hero-search-box" id="hero-search-trigger">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span class="hero-search-text">Buscar entre las 32 materias, apuntes, temas o correlatividades...</span>
+        <kbd class="hero-search-kbd">Ctrl + K</kbd>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="hero-actions">
+        <a href="#plan" class="hero-btn primary-btn">
+          <span>📂</span> Explorar 32 Materias
+        </a>
+        <a href="/correlatividades" class="hero-btn outline-btn">
+          <span>🔗</span> Mapa de Correlatividades
+        </a>
+        <a href="/analizador" class="hero-btn analyzer-btn">
+          <span>📊</span> Analizador Excel (Docentes)
+        </a>
+        <a href="/keystatic" class="hero-btn cms-btn">
+          <span>✏️</span> Administrar en Keystatic
+        </a>
+      </div>
+    </header>
+
+    <!-- Plan por Años (Grid de Años) -->
+    <section id="plan" class="plan-section">
       <div class="section-header">
-        <span class="section-tag">Red de Aulas y Materias</span>
-        <h2 class="section-title">{tituloSeccion}</h2>
-        <p class="section-desc">
-          {descripcionSeccion}
+        <span class="section-tag">Plan de Estudios Oficial</span>
+        <h2 class="section-title">Estructura Curricular por Años</h2>
+        <p class="section-sub">
+          Navegá por las 32 cátedras de la carrera. Cada materia cuenta con su ficha detallada, requisitos de correlatividad para cursar y rendir, y carpeta de Google Drive.
         </p>
       </div>
 
-      <div class="roles-grid" style="margin-top: 0; margin-bottom: 3.5rem;">
-        {listaCatedras.map((catedra) => (
-          <div class="role-card" style={`border-top: 5px solid ${catedra.colorBorde || '#3b82f6'};`}>
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-              <div class="role-icon" style="margin-bottom: 0;">{catedra.icono || '📖'}</div>
-              <span style="font-size: 0.78rem; font-weight: 700; color: #1d4ed8; background: #eff6ff; padding: 3px 10px; border-radius: 9999px; border: 1px solid #bfdbfe;">
-                {catedra.subdominio || 'joif.net'}
+      <div class="years-grid">
+        {tree.map(ano => (
+          <div class="year-card">
+            <div class="year-header">
+              <div class="year-title-box">
+                <span class="year-number">0{ano.ano}</span>
+                <h3 class="year-title">{ano.label}</h3>
+              </div>
+              <span class="year-total-badge">
+                {ano.cuatrimestres.reduce((acc, c) => acc + c.materias.length, 0)} Materias
               </span>
             </div>
-            <h3 class="role-title">{catedra.nombre}</h3>
-            <p class="role-desc">
-              {catedra.descripcion}
-            </p>
-            <ul class="role-features">
-              {catedra.caracteristica1 && <li>{catedra.caracteristica1}</li>}
-              {catedra.caracteristica2 && <li>{catedra.caracteristica2}</li>}
-              {catedra.caracteristica3 && <li>{catedra.caracteristica3}</li>}
-            </ul>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 1.5rem;">
-              <a href={catedra.url} target="_blank" rel="noopener noreferrer" class="btn btn-primary" style="flex: 1;">
-                Ingresar a la Cátedra ↗
-              </a>
-              {catedra.urlAnalizador && (
-                <a href={catedra.urlAnalizador} target="_blank" rel="noopener noreferrer" class="btn btn-teacher" title="Analizador de Excel">
-                  📊 Analizador
-                </a>
-              )}
+
+            <div class="cuatris-wrapper">
+              {ano.cuatrimestres.map(c => (
+                <div class="cuatri-group">
+                  <h4 class="cuatri-heading">{c.label}</h4>
+                  <ul class="materia-mini-list">
+                    {c.materias.map(m => (
+                      <li>
+                        <a href={`/m/${m.slug}`} class="materia-mini-link">
+                          <span class="mini-num">{m.numero}</span>
+                          <span class="mini-icon">{m.icono || '📄'}</span>
+                          <span class="mini-name">{m.nombre}</span>
+                          {m.paraCursar.length > 0 && (
+                            <span class="mini-req-dot" title="Tiene correlatividades previas">🔗</span>
+                          )}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
         ))}
-
-        <!-- Próxima Cátedra -->
-        <div class="role-card" style="border-top: 5px solid #94a3b8; border-style: dashed;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-            <div class="role-icon" style="margin-bottom: 0; background-color: #f1f5f9; color: #64748b;">➕</div>
-            <span style="font-size: 0.78rem; font-weight: 700; color: #475569; background: #f8fafc; padding: 3px 10px; border-radius: 9999px; border: 1px solid #cbd5e1;">Próximamente</span>
-          </div>
-          <h3 class="role-title">Nuevas Cátedras</h3>
-          <p class="role-desc">
-            Espacio preparado para incorporar nuevas materias de la carrera con la misma arquitectura modular Jamstack, panel de administración y hosting 100% gratuito.
-          </p>
-          <ul class="role-features">
-            <li>Integración inmediata bajo subdominio propio.</li>
-            <li>Conexión automática a la barra institucional.</li>
-            <li>Ecosistema docente unificado.</li>
-          </ul>
-          <div style="margin-top: 1.5rem;">
-            <a href="/keystatic" class="btn" style="width: 100%; background: #e2e8f0; color: #475569; text-align:center;">
-              Administrar Cátedras en Keystatic ✏️
-            </a>
-          </div>
-        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- PRESENTACIÓN DE LA CARRERA -->
-  <section id="presentacion" class="section section-alt">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-tag">Fundamentación Pedagógica</span>
-        <h2 class="section-title">El Aprendizaje como Proceso Complejo y Subjetivo</h2>
-        <p class="section-desc">
-          Nuestra carrera concibe al aprendizaje no como una mera acumulación de conocimientos, sino como un proceso relacional, cognitivo y afectivo atravesado por la cultura y las instituciones.
+    <!-- Features / Tools Section -->
+    <section class="tools-section">
+      <div class="tool-card">
+        <div class="tool-icon">📁</div>
+        <h3 class="tool-title">Archivos y Google Drive</h3>
+        <p class="tool-desc">
+          Acceso libre y organizado a las carpetas en la nube de cada una de las materias, con programas, bibliografía y guías de estudio.
         </p>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.75rem; margin-top: 2rem;">
-        <div style="background: white; padding: 1.75rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🎯</div>
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">Objetivos Formativos</h3>
-          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6;">
-            Brindar herramientas epistemológicas, clínicas y pedagógicas para comprender las condiciones que posibilitan o dificultan el aprender en niños, adolescentes y adultos.
-          </p>
-        </div>
-
-        <div style="background: white; padding: 1.75rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🔍</div>
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">Perspectiva Interdisciplinaria</h3>
-          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6;">
-            Articulación entre la psicología del desarrollo, la antropología cultural, el psicoanálisis y las corrientes contemporáneas de neuroeducación e inclusión.
-          </p>
-        </div>
-
-        <div style="background: white; padding: 1.75rem; border-radius: 12px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-          <div style="font-size: 1.75rem; margin-bottom: 0.75rem;">🤝</div>
-          <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--primary);">Metodología Académica</h3>
-          <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6;">
-            Clases dialógicas, talleres de análisis de casos reales, trabajos prácticos grupales y actividades formativas de autoevaluación continua.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PIE DE PÁGINA -->
-  <footer class="site-footer">
-    <div class="container footer-inner">
-      <div class="footer-brand">
-        <div class="brand">
-          <div class="brand-icon">🧠</div>
-          <div class="brand-info">
-            <span class="brand-title">{nombreCarrera}</span>
-            <span class="brand-sub">psp.joif.net</span>
-          </div>
-        </div>
-        <p class="footer-text">
-          {footerDescripcion}
+      <div class="tool-card">
+        <div class="tool-icon">📊</div>
+        <h3 class="tool-title">Analizador de Autoevaluaciones</h3>
+        <p class="tool-desc">
+          Herramienta pedagógica integrada para procesar al instante las respuestas de Google Forms en formato Excel (.xlsx).
         </p>
+        <a href="/analizador" class="tool-link">Abrir Analizador ↗</a>
       </div>
 
-      <div class="footer-links-group">
-        <h4 class="footer-heading">Cátedras Integradas</h4>
-        <ul class="footer-links">
-          {listaCatedras.map(c => (
-            <li><a href={c.url} target="_blank" rel="noopener noreferrer">{c.icono || '📖'} {c.nombre}</a></li>
-          ))}
-          <li><a href="https://evo-1.joif.net/autoevaluacion" target="_blank" rel="noopener noreferrer">📊 Analizador de Autoevaluaciones</a></li>
-          <li><a href="/keystatic">✏️ Admin Keystatic</a></li>
-        </ul>
+      <div class="tool-card">
+        <div class="tool-icon">✏️</div>
+        <h3 class="tool-title">Autogestión con Keystatic CMS</h3>
+        <p class="tool-desc">
+          Panel 100% autogestionable con sincronización directa a GitHub para actualizar links, bibliografía y docentes de forma gratuita.
+        </p>
+        <a href="/keystatic" class="tool-link">Ir al Panel CMS ↗</a>
       </div>
-    </div>
+    </section>
 
-    <div class="container footer-bottom">
-      <p>{footerCopy}</p>
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer class="home-footer">
+      <p>{carreraData.footerDescripcion}</p>
+      <p class="footer-copy">{carreraData.footerCopy}</p>
+    </footer>
+  </div>
 
-</body>
-</html>
+  <script>
+    const heroSearch = document.getElementById('hero-search-trigger');
+    if (heroSearch && window.openQuickSearch) {
+      heroSearch.addEventListener('click', () => window.openQuickSearch());
+    }
+  </script>
+</ObsidianLayout>
+
+<style>
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  /* Hero Banner */
+  .home-hero {
+    padding: 2.5rem 0 1.5rem 0;
+    border-bottom: 1px solid var(--border-vault);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    margin-top: 1rem;
+    line-height: 1.6;
+    max-width: 780px;
+  }
+
+  /* Hero Search Bar */
+  .hero-search-box {
+    margin-top: 2rem;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    max-width: 680px;
+  }
+
+  .hero-search-box:hover {
+    border-color: var(--accent-purple);
+    background: var(--bg-card-hover);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .hero-search-box svg {
+    color: var(--accent-purple);
+    flex-shrink: 0;
+  }
+
+  .hero-search-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .hero-search-kbd {
+    background: var(--bg-vault);
+    border: 1px solid var(--border-vault);
+    font-size: 0.75rem;
+  }
+
+  /* Hero Actions */
+  .hero-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+
+  .primary-btn {
+    background: var(--accent-purple);
+    color: white;
+  }
+
+  .primary-btn:hover {
+    background: var(--accent-purple-hover);
+    color: #161618;
+  }
+
+  .outline-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    color: var(--text-main);
+  }
+
+  .outline-btn:hover {
+    border-color: var(--accent-purple);
+  }
+
+  .analyzer-btn {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  .analyzer-btn:hover {
+    background: rgba(59, 130, 246, 0.25);
+  }
+
+  .cms-btn {
+    background: rgba(139, 92, 246, 0.12);
+    color: #c4b5fd;
+    border: 1px solid rgba(139, 92, 246, 0.25);
+  }
+
+  .cms-btn:hover {
+    background: rgba(139, 92, 246, 0.25);
+  }
+
+  /* Years Grid */
+  .plan-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--accent-purple);
+    text-transform: uppercase;
+  }
+
+  .section-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-main);
+    margin: 4px 0 6px 0;
+  }
+
+  .section-sub {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    max-width: 740px;
+    line-height: 1.5;
+  }
+
+  .years-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .year-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .year-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-vault);
+  }
+
+  .year-title-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .year-number {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent-purple);
+    background: var(--bg-vault);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .year-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .year-total-badge {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    background: var(--bg-vault);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  .cuatris-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .cuatri-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  .materia-mini-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .materia-mini-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-vault);
+    border: 1px solid transparent;
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    transition: all 0.12s;
+  }
+
+  .materia-mini-link:hover {
+    color: var(--text-main);
+    background: var(--bg-card-hover);
+    border-color: var(--accent-purple);
+    transform: translateX(3px);
+  }
+
+  .mini-num {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-faint);
+  }
+
+  .mini-icon {
+    font-size: 0.85rem;
+  }
+
+  .mini-name {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .mini-req-dot {
+    font-size: 0.72rem;
+    opacity: 0.7;
+  }
+
+  /* Tools Section */
+  .tools-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .tool-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-vault);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .tool-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .tool-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .tool-desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .tool-link {
+    font-size: 0.82rem;
+    color: var(--accent-purple-hover);
+    font-weight: 600;
+    margin-top: 0.5rem;
+  }
+
+  .tool-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Footer */
+  .home-footer {
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-vault);
+    font-size: 0.85rem;
+    color: var(--text-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .footer-copy {
+    font-size: 0.78rem;
+  }
+</style>

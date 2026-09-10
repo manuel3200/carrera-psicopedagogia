@@ -1,0 +1,286 @@
+---
+import { getAllMaterias } from '../utils/materias';
+
+const materias = getAllMaterias().map(m => ({
+  numero: m.numero,
+  nombre: m.nombre,
+  slug: m.slug,
+  ano: m.ano,
+  cuatrimestre: m.cuatrimestre,
+  icono: m.icono || '📚',
+  descripcion: m.descripcion || '',
+  paraCursar: m.paraCursar || [],
+  paraRendir: m.paraRendir || [],
+}));
+---
+
+<div id="quick-search-modal" class="search-modal-backdrop" aria-hidden="true">
+  <div class="search-modal-box" role="dialog" aria-modal="true" aria-label="Buscador del Vault">
+    <!-- Top Search Bar -->
+    <div class="search-input-wrapper">
+      <svg class="search-icon-left" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+      <input
+        type="text"
+        id="search-main-input"
+        class="search-main-input"
+        placeholder="Escriba para empezar a buscar..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <div class="search-badges-right">
+        <span class="search-shortcut-hint">ESC para cerrar</span>
+      </div>
+    </div>
+
+    <!-- Quick Filter Tags (Estilo Obsidian) -->
+    <div class="search-options-bar">
+      <span class="options-title">Filtros rápidos:</span>
+      <button class="filter-chip" data-filter="ano:1">1º Año</button>
+      <button class="filter-chip" data-filter="ano:2">2º Año</button>
+      <button class="filter-chip" data-filter="ano:3">3º Año</button>
+      <button class="filter-chip" data-filter="ano:4">4º Año</button>
+      <button class="filter-chip" data-filter="req:">Correlativas</button>
+    </div>
+
+    <!-- Results List or Default History -->
+    <div class="search-results-area" id="search-results-area">
+      <!-- Default state: Historial y Atajos sugeridos -->
+      <div class="search-history-section" id="search-default-view">
+        <div class="history-header">
+          <span>Opciones de búsqueda</span>
+        </div>
+        <div class="search-syntax-help">
+          <div class="syntax-row"><code>path:</code> coincidir año o cuatrimestre</div>
+          <div class="syntax-row"><code>file:</code> coincidir nombre de materia</div>
+          <div class="syntax-row"><code>req:</code> buscar por materias correlativas</div>
+        </div>
+
+        <div class="history-header" style="margin-top: 1rem;">
+          <span>Sugerencias de búsqueda</span>
+        </div>
+        <ul class="history-list">
+          <li class="history-item" data-query="Evolutiva">
+            <span class="history-icon">🕒</span>
+            <span class="history-text">Psicología Evolutiva</span>
+          </li>
+          <li class="history-item" data-query="Antropología">
+            <span class="history-icon">🕒</span>
+            <span class="history-text">Antropología</span>
+          </li>
+          <li class="history-item" data-query="Querol">
+            <span class="history-icon">🕒</span>
+            <span class="history-text">Técnicas de Exploración (Querol Silvia)</span>
+          </li>
+          <li class="history-item" data-query="Práctica">
+            <span class="history-icon">🕒</span>
+            <span class="history-text">Prácticas Profesionales (I a V)</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Live Search Results (Injected via JS) -->
+      <ul class="search-results-list" id="search-results-list" style="display: none;"></ul>
+      <div class="search-no-results" id="search-no-results" style="display: none;">
+        No se encontraron materias con ese término.
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="search-modal-footer">
+      <span><kbd>↑</kbd> <kbd>↓</kbd> Navegar</span>
+      <span><kbd>↵</kbd> Abrir</span>
+      <span><kbd>ESC</kbd> Salir</span>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ materiasJson: JSON.stringify(materias) }}>
+  const allMaterias = JSON.parse(materiasJson);
+
+  const modal = document.getElementById('quick-search-modal');
+  const input = document.getElementById('search-main-input');
+  const resultsList = document.getElementById('search-results-list');
+  const defaultView = document.getElementById('search-default-view');
+  const noResults = document.getElementById('search-no-results');
+
+  let selectedIndex = 0;
+  let currentResults = [];
+
+  function openSearch(initialQuery = '') {
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    input.value = initialQuery;
+    input.focus();
+    if (initialQuery) {
+      handleSearch(initialQuery);
+    } else {
+      showDefaultView();
+    }
+  }
+
+  function closeSearch() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    input.value = '';
+  }
+
+  function showDefaultView() {
+    defaultView.style.display = 'block';
+    resultsList.style.display = 'none';
+    noResults.style.display = 'none';
+  }
+
+  function renderResults(list) {
+    currentResults = list;
+    selectedIndex = 0;
+
+    if (list.length === 0) {
+      defaultView.style.display = 'none';
+      resultsList.style.display = 'none';
+      noResults.style.display = 'block';
+      return;
+    }
+
+    defaultView.style.display = 'none';
+    noResults.style.display = 'none';
+    resultsList.style.display = 'block';
+
+    resultsList.innerHTML = list.map((m, idx) => `
+      <li class="search-result-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}" data-slug="${m.slug}">
+        <div class="result-top">
+          <span class="result-badge">${m.numero}</span>
+          <span class="result-title">${m.nombre}</span>
+          <span class="result-year">${m.ano}º Año • ${m.cuatrimestre}º C</span>
+        </div>
+        <p class="result-desc">${m.descripcion ? m.descripcion.substring(0, 110) + '...' : ''}</p>
+        ${m.paraCursar && m.paraCursar.length > 0 ? `
+          <div class="result-correlat">
+            <strong>Req:</strong> ${m.paraCursar.join(', ')}
+          </div>
+        ` : ''}
+      </li>
+    `).join('');
+
+    // Attach click events
+    resultsList.querySelectorAll('.search-result-item').forEach(el => {
+      el.addEventListener('click', () => {
+        const slug = el.getAttribute('data-slug');
+        window.location.href = `/m/${slug}`;
+      });
+    });
+  }
+
+  function handleSearch(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      showDefaultView();
+      return;
+    }
+
+    let filtered = allMaterias;
+
+    // Filter syntax: ano:1 or req:
+    if (q.startsWith('ano:')) {
+      const year = q.replace('ano:', '').trim();
+      filtered = allMaterias.filter(m => m.ano === year);
+    } else if (q.startsWith('req:')) {
+      const reqQuery = q.replace('req:', '').trim();
+      filtered = allMaterias.filter(m =>
+        m.paraCursar.some(r => r.toLowerCase().includes(reqQuery)) ||
+        m.paraRendir.some(r => r.toLowerCase().includes(reqQuery))
+      );
+    } else {
+      filtered = allMaterias.filter(m => {
+        return (
+          m.nombre.toLowerCase().includes(q) ||
+          m.numero.includes(q) ||
+          m.descripcion.toLowerCase().includes(q) ||
+          m.paraCursar.some(r => r.toLowerCase().includes(q)) ||
+          m.paraRendir.some(r => r.toLowerCase().includes(q))
+        );
+      });
+    }
+
+    renderResults(filtered);
+  }
+
+  input.addEventListener('input', (e) => handleSearch(e.target.value));
+
+  // Keyboard navigation
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeSearch();
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (currentResults.length > 0) {
+        selectedIndex = (selectedIndex + 1) % currentResults.length;
+        updateSelection();
+      }
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (currentResults.length > 0) {
+        selectedIndex = (selectedIndex - 1 + currentResults.length) % currentResults.length;
+        updateSelection();
+      }
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentResults[selectedIndex]) {
+        window.location.href = `/m/${currentResults[selectedIndex].slug}`;
+      }
+    }
+  });
+
+  function updateSelection() {
+    const items = resultsList.querySelectorAll('.search-result-item');
+    items.forEach((item, idx) => {
+      item.classList.toggle('selected', idx === selectedIndex);
+      if (idx === selectedIndex) item.scrollIntoView({ block: 'nearest' });
+    });
+  }
+
+  // Global keyboard shortcut Ctrl+K / Cmd+K
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+      e.preventDefault();
+      if (modal.classList.contains('open')) {
+        closeSearch();
+      } else {
+        openSearch();
+      }
+    }
+  });
+
+  // Close on backdrop click
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeSearch();
+  });
+
+  // History suggestions click
+  document.querySelectorAll('.history-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const q = el.getAttribute('data-query') || '';
+      input.value = q;
+      handleSearch(q);
+      input.focus();
+    });
+  });
+
+  // Quick filter chips click
+  document.querySelectorAll('.filter-chip').forEach(el => {
+    el.addEventListener('click', () => {
+      const f = el.getAttribute('data-filter') || '';
+      input.value = f;
+      handleSearch(f);
+      input.focus();
+    });
+  });
+
+  // Expose to window for external buttons
+  window.openQuickSearch = openSearch;
+
+  const sidebarTrigger = document.getElementById('sidebar-quick-search-trigger');
+  if (sidebarTrigger) sidebarTrigger.addEventListener('click', () => openSearch());
+
+  const ribbonSearchBtn = document.getElementById('ribbon-search-btn');
+  if (ribbonSearchBtn) ribbonSearchBtn.addEventListener('click', () => openSearch());
+</script>

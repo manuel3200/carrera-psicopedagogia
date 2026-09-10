@@ -1,4 +1,4 @@
-import { config, fields, singleton } from '@keystatic/core';
+import { collection, config, fields, singleton } from '@keystatic/core';
 
 const isProd = process.env.NODE_ENV === 'production';
 
@@ -15,7 +15,7 @@ export default config({
   },
   ui: {
     brand: {
-      name: 'Portal Psicopedagogía — CMS',
+      name: 'Vault Psicopedagogía — CMS',
     },
   },
   singletons: {
@@ -56,37 +56,110 @@ export default config({
         }),
       },
     }),
-
-    catedras: singleton({
-      label: 'Cátedras de la Carrera',
-      path: 'src/data/catedras/index',
+  },
+  collections: {
+    materias: collection({
+      label: 'Materias de la Carrera (32 Cátedras)',
+      slugField: 'slug',
+      path: 'src/data/materias/*',
       format: { data: 'json' },
       schema: {
-        tituloSeccion: fields.text({
-          label: 'Título de Sección',
-          defaultValue: 'Cátedras Integradas',
+        numero: fields.text({
+          label: 'Número de Materia (ej: 01)',
+          validation: { isRequired: true },
         }),
-        descripcionSeccion: fields.text({
-          label: 'Bajada de la Sección',
+        nombre: fields.text({
+          label: 'Nombre Oficial de la Materia',
+          validation: { isRequired: true },
+        }),
+        slug: fields.slug({
+          name: {
+            label: 'Slug / URL corta (ej: filosofia)',
+          },
+        }),
+        ano: fields.select({
+          label: 'Año de Cursada',
+          options: [
+            { label: 'Primer Año', value: '1' },
+            { label: 'Segundo Año', value: '2' },
+            { label: 'Tercer Año', value: '3' },
+            { label: 'Cuarto Año', value: '4' },
+          ],
+          defaultValue: '1',
+        }),
+        cuatrimestre: fields.select({
+          label: 'Cuatrimestre',
+          options: [
+            { label: '1º Cuatrimestre', value: '1' },
+            { label: '2º Cuatrimestre', value: '2' },
+            { label: 'Anual', value: 'anual' },
+          ],
+          defaultValue: '1',
+        }),
+        icono: fields.text({
+          label: 'Emoji / Ícono representativo',
+          defaultValue: '📚',
+        }),
+        color: fields.text({
+          label: 'Color distintivo (Hexadecimal, ej: #7c3aed)',
+          defaultValue: '#7c3aed',
+        }),
+        descripcion: fields.text({
+          label: 'Descripción o Fundamentación de la Cátedra',
           multiline: true,
-          defaultValue: 'Seleccioná la materia a la que deseás ingresar. Cada espacio cuenta con su propio repositorio bibliográfico en la nube, panel autogestionable y procesador pedagógico de autoevaluaciones.',
         }),
-        lista: fields.array(
+        driveUrl: fields.url({
+          label: 'Enlace a Carpeta Oficial de Google Drive',
+        }),
+        analizadorUrl: fields.url({
+          label: 'Enlace al Analizador de Autoevaluaciones (Opcional)',
+        }),
+        paraCursar: fields.array(
+          fields.text({ label: 'Requisito para cursar' }),
+          {
+            label: 'Correlatividades para Cursar (Resolución 18/13)',
+            itemLabel: props => props.value || 'Requisito',
+          }
+        ),
+        paraRendir: fields.array(
+          fields.text({ label: 'Requisito para rendir final' }),
+          {
+            label: 'Correlatividades para Rendir Final (Resolución 18/13)',
+            itemLabel: props => props.value || 'Requisito',
+          }
+        ),
+        docentes: fields.array(
           fields.object({
-            nombre: fields.text({ label: 'Nombre de la Materia' }),
-            url: fields.url({ label: 'Enlace del Sitio Oficial' }),
-            subdominio: fields.text({ label: 'Subdominio visible (ej: evo-1.joif.net)' }),
-            icono: fields.text({ label: 'Icono / Emoji (ej: 🌱)' }),
-            colorBorde: fields.text({ label: 'Color distintivo (ej: #3b82f6)' }),
-            descripcion: fields.text({ label: 'Descripción breve de la materia', multiline: true }),
-            caracteristica1: fields.text({ label: 'Punto destacado 1' }),
-            caracteristica2: fields.text({ label: 'Punto destacado 2' }),
-            caracteristica3: fields.text({ label: 'Punto destacado 3' }),
-            urlAnalizador: fields.url({ label: 'Enlace al Analizador de Excel' }),
+            nombre: fields.text({ label: 'Nombre del Docente' }),
+            cargo: fields.text({ label: 'Cargo (Titular, Adjunto, JTP)' }),
+            contacto: fields.text({ label: 'Contacto / Email (opcional)' }),
           }),
           {
-            label: 'Cátedras Activas',
-            itemLabel: props => props.fields.nombre.value || 'Nueva Cátedra',
+            label: 'Equipo Docente',
+            itemLabel: props => props.fields.nombre.value || 'Docente',
+          }
+        ),
+        unidades: fields.array(
+          fields.object({
+            numero: fields.text({ label: 'Nº Unidad / Eje' }),
+            titulo: fields.text({ label: 'Título de la Unidad' }),
+            descripcion: fields.text({ label: 'Contenidos / Ejes temáticos', multiline: true }),
+            bibliografia: fields.text({ label: 'Bibliografía sugerida', multiline: true }),
+          }),
+          {
+            label: 'Unidades Temáticas y Contenidos',
+            itemLabel: props => `Unidad ${props.fields.numero.value}: ${props.fields.titulo.value || 'Sin título'}`,
+          }
+        ),
+        enlacesAdicionales: fields.array(
+          fields.object({
+            titulo: fields.text({ label: 'Título del Enlace' }),
+            url: fields.url({ label: 'Enlace / URL' }),
+            descripcion: fields.text({ label: 'Descripción breve' }),
+          }),
+          {
+            label: 'Recursos y Enlaces Adicionales',
+            itemLabel: props => props.fields.titulo.value || 'Nuevo Enlace',
           }
         ),
       },

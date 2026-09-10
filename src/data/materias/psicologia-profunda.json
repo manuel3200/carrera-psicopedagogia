@@ -1,0 +1,28 @@
+{
+  "numero": "09",
+  "nombre": "Psicología Profunda",
+  "slug": "psicologia-profunda",
+  "ano": "2",
+  "cuatrimestre": "1",
+  "icono": "🗝️",
+  "color": "#7c3aed",
+  "descripcion": "Fundamentos metapsicológicos del psicoanálisis freudiano y post-freudiano. Estructura del aparato psíquico, primera y segunda tópica, pulsión y síntoma.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología General (Regularizada)"
+  ],
+  "paraRendir": [
+    "Psicología General (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Metapsicología y Dinámica Inconsciente",
+      "descripcion": "El inconciente, mecanismos de defensa y transferencia.",
+      "bibliografia": "Obras completas de Sigmund Freud."
+    }
+  ],
+  "enlacesAdicionales": []
+}

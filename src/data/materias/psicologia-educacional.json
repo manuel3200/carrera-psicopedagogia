@@ -1,0 +1,31 @@
+{
+  "numero": "17",
+  "nombre": "Psicología Educacional",
+  "slug": "psicologia-educacional",
+  "ano": "3",
+  "cuatrimestre": "1",
+  "icono": "🎓",
+  "color": "#6d28d9",
+  "descripcion": "Articulación entre psicología y educación. Teorías socioculturales (Vygotski), aprendizaje significativo (Ausubel), motivación y educabilidad.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Evolutiva II (Regularizada)",
+    "Didáctica I (Regularizada)",
+    "Psicología Genética (Regularizada)"
+  ],
+  "paraRendir": [
+    "Didáctica I (Aprobada)",
+    "Psicología Evolutiva II (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "El Aprendizaje en Contextos Escolares",
+      "descripcion": "Zona de desarrollo próximo, andamiaje e interacciones discursivas.",
+      "bibliografia": "Baquero, Coll, Vygotski y Bruner."
+    }
+  ],
+  "enlacesAdicionales": []
+}

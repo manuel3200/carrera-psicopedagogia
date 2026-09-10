@@ -1,0 +1,29 @@
+{
+  "numero": "31",
+  "nombre": "Organización Escolar para la Enseñanza Común y Especial",
+  "slug": "organizacion-escolar",
+  "ano": "4",
+  "cuatrimestre": "2",
+  "icono": "🏫",
+  "color": "#0d9488",
+  "descripcion": "Gestión institucional, normativas y modalidades educativas: educación común, especial, hospitalaria y domiciliaria.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Didáctica III (Regularizada)",
+    "Psicología Institucional y Dinámica de Grupo (Regularizada)"
+  ],
+  "paraRendir": [
+    "Didáctica III (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Gestión y Modalidades Educativas",
+      "descripcion": "Estructura organizativa, PEI (Proyecto Educativo Institucional) y equipos directivos.",
+      "bibliografia": "Normativas y textos de gestión escolar."
+    }
+  ],
+  "enlacesAdicionales": []
+}

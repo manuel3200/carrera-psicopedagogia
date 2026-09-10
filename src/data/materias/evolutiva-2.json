@@ -1,0 +1,28 @@
+{
+  "numero": "08",
+  "nombre": "Psicología Evolutiva II",
+  "slug": "evolutiva-2",
+  "ano": "2",
+  "cuatrimestre": "1",
+  "icono": "🌿",
+  "color": "#15803d",
+  "descripcion": "Estudio de las transformaciones subjetivas en la pubertad, adolescencia, juventud, adultez y vejez. Duelo por el cuerpo infantil, identidad y proyectos vitales.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Evolutiva I (Regularizada)"
+  ],
+  "paraRendir": [
+    "Psicología Evolutiva I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Adolescencia y Ciclo Vital Adulto",
+      "descripcion": "La construcción identitaria, duelos y cambios psicosociales.",
+      "bibliografia": "Guías de estudio y casos clínicos evolutivos."
+    }
+  ],
+  "enlacesAdicionales": []
+}

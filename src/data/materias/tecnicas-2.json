@@ -1,0 +1,29 @@
+{
+  "numero": "16",
+  "nombre": "Técnicas de Exploración Psicopedagógicas II",
+  "slug": "tecnicas-2",
+  "ano": "3",
+  "cuatrimestre": "1",
+  "icono": "📋",
+  "color": "#a21caf",
+  "descripcion": "Baterías psicométricas y cognitivas aplicadas: tests de inteligencia (WISC), evaluación neuropsicológica del aprendizaje, lectura y escritura.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Técnicas de Exploración Psicopedagógicas I (Regularizada)"
+  ],
+  "paraRendir": [
+    "Técnicas de Exploración Psicopedagógicas I (Aprobada)",
+    "Psicoestadística (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Evaluación Cognitiva y Psicométrica",
+      "descripcion": "Administración, puntuación e interpretación de baterías estandarizadas.",
+      "bibliografia": "Manuales de técnicas psicométricas."
+    }
+  ],
+  "enlacesAdicionales": []
+}

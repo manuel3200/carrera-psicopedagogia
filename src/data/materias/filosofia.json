@@ -1,0 +1,24 @@
+{
+  "numero": "01",
+  "nombre": "Introducción a la Filosofía",
+  "slug": "filosofia",
+  "ano": "1",
+  "cuatrimestre": "1",
+  "icono": "🏛️",
+  "color": "#4f46e5",
+  "descripcion": "Abordaje introductorio a las problemáticas ontológicas, epistemológicas y éticas del pensamiento occidental. Bases reflexivas para la comprensión del sujeto que conoce y aprende.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [],
+  "paraRendir": [],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "El Origen del Pensar Filosófico",
+      "descripcion": "Asombro, duda y situaciones límite. Filosofía de la ciencia y el conocimiento.",
+      "bibliografia": "Textos de cátedra."
+    }
+  ],
+  "enlacesAdicionales": []
+}

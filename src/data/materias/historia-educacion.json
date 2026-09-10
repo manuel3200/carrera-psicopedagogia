@@ -1,0 +1,29 @@
+{
+  "numero": "21",
+  "nombre": "Historia de la Educación Argentina",
+  "slug": "historia-educacion",
+  "ano": "3",
+  "cuatrimestre": "2",
+  "icono": "📜",
+  "color": "#047857",
+  "descripcion": "Genealogía de las políticas educativas y el sistema escolar argentino desde la generación del 80 hasta las leyes educativas contemporáneas.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Didáctica II (Regularizada)",
+    "Pedagogía General (Aprobada)"
+  ],
+  "paraRendir": [
+    "Didáctica I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Génesis del Sistema Educativo Nacional",
+      "descripcion": "Ley 1420, debates pedagógicos fundacionales y transformaciones democráticas.",
+      "bibliografia": "Adriana Puiggrós, Pineau y Tedesco."
+    }
+  ],
+  "enlacesAdicionales": []
+}

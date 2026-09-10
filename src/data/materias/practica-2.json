@@ -1,0 +1,34 @@
+{
+  "numero": "18",
+  "nombre": "Práctica II",
+  "slug": "practica-2",
+  "ano": "3",
+  "cuatrimestre": "1",
+  "icono": "🏫",
+  "color": "#be123c",
+  "descripcion": "Intervenciones psicopedagógicas institucionales: acompañamiento de trayectorias escolares, equipos de orientación escolar y trabajo interdisciplinario.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Genética (Regularizada)",
+    "Técnicas de Exploración Psicopedagógica I (Regularizada)",
+    "Psicología Evolutiva II (Regularizada)",
+    "Didáctica II (Regularizada)",
+    "Psicología Profunda (Regularizada)",
+    "Práctica I (Aprobada)"
+  ],
+  "paraRendir": [
+    "Práctica I (Aprobada)",
+    "Psicología Evolutiva II (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "El Psicopedagogo en la Institución Escolar",
+      "descripcion": "Diagnóstico institucional y dispositivos de acompañamiento a docentes y alumnos.",
+      "bibliografia": "Protocolos y normativas de orientación escolar."
+    }
+  ],
+  "enlacesAdicionales": []
+}

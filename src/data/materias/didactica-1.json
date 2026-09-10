@@ -1,0 +1,28 @@
+{
+  "numero": "10",
+  "nombre": "Didáctica I",
+  "slug": "didactica-1",
+  "ano": "2",
+  "cuatrimestre": "1",
+  "icono": "📝",
+  "color": "#0284c7",
+  "descripcion": "Teorías de la enseñanza, transposición didáctica, diseño curricular y estrategias docentes en el aula.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Pedagogía General (Regularizada)"
+  ],
+  "paraRendir": [
+    "Pedagogía General (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "El Campo de la Didáctica",
+      "descripcion": "Currículum, enseñanza y dispositivos pedagógicos.",
+      "bibliografia": "Textos de Camilloni, Litwin y Feldman."
+    }
+  ],
+  "enlacesAdicionales": []
+}

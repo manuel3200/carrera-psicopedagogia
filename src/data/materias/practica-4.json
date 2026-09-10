@@ -1,0 +1,29 @@
+{
+  "numero": "28",
+  "nombre": "Práctica IV",
+  "slug": "practica-4",
+  "ano": "4",
+  "cuatrimestre": "1",
+  "icono": "🏥",
+  "color": "#881337",
+  "descripcion": "Prácticas de tratamiento psicopedagógico clínico. Diseño de estrategias terapéuticas, intervención en problemas de aprendizaje y supervisión de casos.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Práctica III (Aprobada)",
+    "Técnicas de Exploración Psicopedagógicas II (Aprobada)"
+  ],
+  "paraRendir": [
+    "Práctica III (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Tratamiento Clínico Psicopedagógico",
+      "descripcion": "Encuadre clínico, intervenciones con el paciente, la familia y la escuela.",
+      "bibliografia": "Autores de clínica psicopedagógica (Müller, Paín, Fernández, Schlemenson)."
+    }
+  ],
+  "enlacesAdicionales": []
+}

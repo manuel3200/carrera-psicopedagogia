@@ -1,0 +1,125 @@
+---
+import ObsidianSidebar from '../components/ObsidianSidebar.astro';
+import QuickSearch from '../components/QuickSearch.astro';
+import '../styles/obsidian.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  currentSlug?: string;
+  breadcrumbs?: Array<{ label: string; url?: string }>;
+}
+
+const {
+  title,
+  description = "Portal Central y Vault Académico de la Carrera de Psicopedagogía",
+  currentSlug = '',
+  breadcrumbs = []
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title} | Vault Psicopedagogía</title>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+</head>
+<body>
+  <!-- Top Navigation Header -->
+  <header class="vault-topbar">
+    <div class="topbar-left">
+      <button class="topbar-btn" id="mobile-sidebar-toggle" title="Abrir explorador" aria-label="Abrir explorador">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+
+      <!-- Breadcrumbs -->
+      <nav class="topbar-breadcrumbs" aria-label="Ruta de navegación">
+        <a href="/" class="breadcrumb-link">psicopedagogia</a>
+        {breadcrumbs.map(b => (
+          <>
+            <span class="breadcrumb-sep">/</span>
+            {b.url ? (
+              <a href={b.url} class="breadcrumb-link">{b.label}</a>
+            ) : (
+              <span class="breadcrumb-current">{b.label}</span>
+            )}
+          </>
+        ))}
+      </nav>
+    </div>
+
+    <!-- Center Search Trigger -->
+    <div class="topbar-center">
+      <div class="topbar-search-trigger" id="topbar-search-btn">
+        <div class="search-placeholder">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <span>Buscar materia, apunte o correlativa...</span>
+        </div>
+        <kbd>Ctrl K</kbd>
+      </div>
+    </div>
+
+    <!-- Right Actions -->
+    <div class="topbar-right">
+      <a href="/analizador" class="topbar-link" title="Analizador Excel de Autoevaluaciones">
+        <span>📊</span>
+        <span style="display:none; @media(min-width:640px){display:inline;}">Analizador</span>
+      </a>
+      <a href="/correlatividades" class="topbar-link" title="Mapa del Plan de Estudios">
+        <span>🔗</span>
+        <span>Plan 18/13</span>
+      </a>
+      <a href="/keystatic" class="topbar-link admin-btn" title="Panel CMS Keystatic">
+        <span>✏️</span>
+        <span>CMS</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Grid Layout -->
+  <div class="vault-layout">
+    <ObsidianSidebar currentSlug={currentSlug} />
+
+    <main class="vault-main">
+      <slot />
+    </main>
+  </div>
+
+  <!-- Quick Search Modal -->
+  <QuickSearch />
+
+  <script>
+    // Sidebar toggle for desktop & mobile
+    const sidebar = document.getElementById('obsidian-sidebar');
+    const collapseBtn = document.getElementById('sidebar-collapse-btn');
+    const mobileToggle = document.getElementById('mobile-sidebar-toggle');
+    const mobileClose = document.getElementById('mobile-sidebar-close');
+    const topbarSearch = document.getElementById('topbar-search-btn');
+
+    if (collapseBtn && sidebar) {
+      collapseBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+      });
+    }
+
+    if (mobileToggle && sidebar) {
+      mobileToggle.addEventListener('click', () => {
+        sidebar.classList.add('mobile-open');
+      });
+    }
+
+    if (mobileClose && sidebar) {
+      mobileClose.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+      });
+    }
+
+    if (topbarSearch && window.openQuickSearch) {
+      topbarSearch.addEventListener('click', () => window.openQuickSearch());
+    }
+  </script>
+</body>
+</html>

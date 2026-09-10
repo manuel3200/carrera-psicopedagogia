@@ -1,0 +1,30 @@
+{
+  "numero": "19",
+  "nombre": "Psicopatología",
+  "slug": "psicopatologia",
+  "ano": "3",
+  "cuatrimestre": "2",
+  "icono": "⚕️",
+  "color": "#dc2626",
+  "descripcion": "Estructuras psicopatológicas en la infancia y la adolescencia: neurosis, psicosis, trastornos del espectro autista y afecciones psicosomáticas.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Profunda (Regularizada)",
+    "Psicología Genética (Regularizada)"
+  ],
+  "paraRendir": [
+    "Psicología Evolutiva II (Aprobada)",
+    "Psicología Profunda (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Clínica Psicopatológica Infanto-Juvenil",
+      "descripcion": "Diagnóstico diferencial, sufrimiento psíquico y su impacto en el aprender.",
+      "bibliografia": "Manuales de psicopatología y psicoanálisis de niños."
+    }
+  ],
+  "enlacesAdicionales": []
+}

@@ -1,0 +1,24 @@
+{
+  "numero": "04",
+  "nombre": "Anatomía y Fisiología del Sistema Nervioso I",
+  "slug": "anatomia-1",
+  "ano": "1",
+  "cuatrimestre": "1",
+  "icono": "🔬",
+  "color": "#059669",
+  "descripcion": "Estructura y función del sistema nervioso central y periférico. Neuroanatomía fundamental y correlación funcional con los procesos sensorio-motores.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [],
+  "paraRendir": [],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Organización del Sistema Nervioso",
+      "descripcion": "Neurona, sinapsis, corteza cerebral y vías de conducción.",
+      "bibliografia": "Atlas y textos anatómicos recomendados."
+    }
+  ],
+  "enlacesAdicionales": []
+}

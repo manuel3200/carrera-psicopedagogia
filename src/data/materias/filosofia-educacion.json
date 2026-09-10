@@ -1,0 +1,30 @@
+{
+  "numero": "24",
+  "nombre": "Filosofía de la Educación",
+  "slug": "filosofia-educacion",
+  "ano": "4",
+  "cuatrimestre": "1",
+  "icono": "🏛️",
+  "color": "#4338ca",
+  "descripcion": "Reflexión crítica sobre los fines de la educación, el sujeto pedagógico, la autoridad y los debates epistemológicos de la modernidad y posmodernidad.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Historia de la Educación Argentina (Regularizada)",
+    "Introducción a la Filosofía (Aprobada)",
+    "Didáctica II (Aprobada)"
+  ],
+  "paraRendir": [
+    "Historia de la Educación Argentina (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Los Fines de la Formación Humana",
+      "descripcion": "Emancipación, transmisión y crítica de la racionalidad educativa.",
+      "bibliografia": "Autores clásicos y contemporáneos de la filosofía de la educación."
+    }
+  ],
+  "enlacesAdicionales": []
+}

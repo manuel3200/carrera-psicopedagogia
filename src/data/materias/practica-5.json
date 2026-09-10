@@ -1,0 +1,29 @@
+{
+  "numero": "32",
+  "nombre": "Práctica V",
+  "slug": "practica-5",
+  "ano": "4",
+  "cuatrimestre": "2",
+  "icono": "🎓",
+  "color": "#7e22ce",
+  "descripcion": "Práctica profesional final integradora y ateneo clínico. Elaboración de trabajo final / tesina de grado y socialización de intervenciones psicopedagógicas.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Institucional y Dinámica de Grupo (Regularizada)",
+    "Práctica IV (Aprobada)"
+  ],
+  "paraRendir": [
+    "Psicología Institucional y Dinámica de Grupo (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Ateneo Clínico y Residencia Profesional",
+      "descripcion": "Presentación de casos clínicos, supervisión y síntesis de competencias de egreso.",
+      "bibliografia": "Ateneos clínicos y pautas para tesinas de psicopedagogía."
+    }
+  ],
+  "enlacesAdicionales": []
+}

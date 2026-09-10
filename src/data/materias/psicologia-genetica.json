@@ -1,0 +1,28 @@
+{
+  "numero": "11",
+  "nombre": "Psicología Genética",
+  "slug": "psicologia-genetica",
+  "ano": "2",
+  "cuatrimestre": "2",
+  "icono": "🧩",
+  "color": "#9333ea",
+  "descripcion": "La teoría psicogenética de Jean Piaget y la Escuela de Ginebra. Génesis y evolución de las estructuras cognitivas desde el estadio sensorio-motor al operatorio formal.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Psicología Evolutiva II (Regularizada)"
+  ],
+  "paraRendir": [
+    "Psicología Evolutiva I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Epistemología y Psicología Genética",
+      "descripcion": "Asimilación, acomodación, equilibración y estadios cognitivos.",
+      "bibliografia": "Obras de Jean Piaget y colaboradores."
+    }
+  ],
+  "enlacesAdicionales": []
+}

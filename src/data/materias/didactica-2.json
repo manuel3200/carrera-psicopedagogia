@@ -1,0 +1,28 @@
+{
+  "numero": "13",
+  "nombre": "Didáctica II",
+  "slug": "didactica-2",
+  "ano": "2",
+  "cuatrimestre": "2",
+  "icono": "📐",
+  "color": "#0284c7",
+  "descripcion": "Profundización didáctica en los niveles del sistema educativo: inicial, primario y secundario. Análisis de prácticas de aula y adaptaciones curriculares.",
+  "driveUrl": "https://drive.google.com",
+  "analizadorUrl": "",
+  "paraCursar": [
+    "Didáctica I (Regularizada)"
+  ],
+  "paraRendir": [
+    "Didáctica I (Aprobada)"
+  ],
+  "docentes": [],
+  "unidades": [
+    {
+      "numero": "1",
+      "titulo": "Diseño y Evaluación Didáctica",
+      "descripcion": "Planificación de secuencias didácticas y criterios de evaluación formativa.",
+      "bibliografia": "Enfoques didácticos contemporáneos."
+    }
+  ],
+  "enlacesAdicionales": []
+}
