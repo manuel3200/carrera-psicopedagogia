@@ -16,13 +16,6 @@
     "Psicología General (Aprobada)"
   ],
   "docentes": [],
-  "unidades": [
-    {
-      "numero": "1",
-      "titulo": "Desarrollo Temprano e Infancia",
-      "descripcion": "Vínculo primordial, apego, desarrollo psicomotor y primeras matrices vinculares.",
-      "bibliografia": "Textos de Freud, Spitz, Bowlby y Winnicott."
-    }
-  ],
+  "unidades": [],
   "enlacesAdicionales": []
 }
