@@ -1937,7 +1937,7 @@ const years = [
   @media print {
     @page {
       size: A4 portrait;
-      margin: 8mm 7mm 8mm 7mm;
+      margin: 0.5cm;
     }
 
     *, *::before, *::after {
@@ -1987,10 +1987,14 @@ const years = [
       background: #ffffff !important;
     }
 
-    /* Mostrar Hoja de Impresión Oficial */
+    /* Mostrar Hoja de Impresión Oficial con borde seguro de 0.5 */
     .print-sheet {
       display: block !important;
       width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 0.2cm 0.4cm !important;
+      margin: 0 auto !important;
       color: #0f172a !important;
     }
 
@@ -2037,7 +2041,7 @@ const years = [
       grid-template-columns: repeat(5, 1fr);
       gap: 6px;
       background: #f8fafc;
-      border: 1px solid #cbd5e1;
+      border: 0.5pt solid #94a3b8;
       border-radius: 4px;
       padding: 5px 8px;
       margin-bottom: 7px;
@@ -2047,7 +2051,7 @@ const years = [
 
     .print-metric {
       text-align: center;
-      border-right: 1px solid #e2e8f0;
+      border-right: 0.5pt solid #cbd5e1;
       padding: 0 4px;
     }
 
@@ -2083,7 +2087,7 @@ const years = [
     }
 
     .print-next-col {
-      border: 1px solid #cbd5e1;
+      border: 0.5pt solid #94a3b8;
       border-radius: 4px;
       padding: 5px 7px;
       background: #ffffff;
@@ -2097,7 +2101,7 @@ const years = [
       color: #1e293b;
       margin: 0 0 4px 0;
       padding-bottom: 3px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 0.5pt solid #cbd5e1;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -2126,13 +2130,14 @@ const years = [
       font-style: italic;
     }
 
-    /* Tabla Oficial de las 32 Asignaturas */
+    /* Tabla Oficial de las 32 Asignaturas con Bordes 0.5pt */
     .print-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 7.2pt;
       line-height: 1.15;
       margin-bottom: 5px;
+      border: 0.5pt solid #64748b;
     }
 
     .print-table thead {
@@ -2148,19 +2153,19 @@ const years = [
       letter-spacing: 0.3px;
       padding: 3.5px 5px;
       text-align: left;
-      border: 1px solid #0f172a;
+      border: 0.5pt solid #475569;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
 
     .print-table td {
       padding: 2.2px 5px;
-      border: 1px solid #cbd5e1;
+      border: 0.5pt solid #94a3b8;
       vertical-align: middle;
     }
 
     .print-table tr:nth-child(even) td {
-      background: #f8fafc;
+      background: #f1f5f9 !important;
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
@@ -2266,7 +2271,7 @@ const years = [
 
     /* Pie de Página Oficial */
     .print-footer {
-      border-top: 1px solid #cbd5e1;
+      border-top: 0.5pt solid #94a3b8;
       padding-top: 4px;
       margin-top: 6px;
       font-size: 6.7pt;
