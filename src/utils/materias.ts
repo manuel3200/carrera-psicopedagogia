@@ -88,23 +88,68 @@ export function getSlugForCorrelativa(text: string, allMaterias: Materia[]): { s
     .replace(/\./g, '')
     .trim();
 
-  const normalizeStr = (str: string) =>
-    str
+  const getRoman = (str: string): string | null => {
+    const m = str.trim().match(/\b(I|II|III|IV|V)\b$/i);
+    return m ? m[1].toUpperCase() : null;
+  };
+
+  const cleanBase = (str: string): string => {
+    return str
       .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
       .replace(/sist\./g, 'sistema')
       .replace(/sist /g, 'sistema ')
+      .replace(/psicopedagogicas/g, 'psicopedagogica')
+      .replace(/psicopedagogica/g, 'psicopedagogica')
+      .replace(/\b(i|ii|iii|iv|v)\b$/i, '')
       .replace(/\./g, '')
       .trim();
+  };
 
-  // Find fuzzy match
-  const found = allMaterias.find(m => {
-    const mClean = normalizeStr(m.nombre);
-    const cClean = normalizeStr(cleanName);
-    return mClean.includes(cClean) || cClean.includes(mClean);
-  });
+  const reqRoman = getRoman(cleanName);
+  const reqBase = cleanBase(cleanName);
+
+  // Strategy 1: If requirement has Roman numeral, match subject with exact same Roman numeral and matching base
+  if (reqRoman) {
+    const candidates = allMaterias.filter(m => {
+      const mRoman = getRoman(m.nombre);
+      if (reqRoman !== mRoman) return false;
+      const mBase = cleanBase(m.nombre);
+      return mBase === reqBase || mBase.includes(reqBase) || reqBase.includes(mBase);
+    });
+
+    if (candidates.length > 0) {
+      const exact = candidates.find(m => cleanBase(m.nombre) === reqBase);
+      const chosen = exact || candidates[0];
+      return {
+        slug: chosen.slug,
+        name: cleanName,
+        status,
+      };
+    }
+  } else {
+    // Strategy 2: If requirement has NO Roman numeral, do NOT match subjects with Roman numerals (e.g. Didáctica I)
+    const candidatesNoRoman = allMaterias.filter(m => {
+      const mRoman = getRoman(m.nombre);
+      if (mRoman) return false;
+      const mBase = cleanBase(m.nombre);
+      return mBase === reqBase || mBase.includes(reqBase) || reqBase.includes(mBase);
+    });
+
+    if (candidatesNoRoman.length > 0) {
+      const exact = candidatesNoRoman.find(m => cleanBase(m.nombre) === reqBase);
+      const chosen = exact || candidatesNoRoman[0];
+      return {
+        slug: chosen.slug,
+        name: cleanName,
+        status,
+      };
+    }
+  }
 
   return {
-    slug: found ? found.slug : undefined,
+    slug: undefined,
     name: cleanName,
     status,
   };
