@@ -1,0 +1,1647 @@
+---
+import ObsidianLayout from '../layouts/ObsidianLayout.astro';
+import { getAllMaterias, getSlugForCorrelativa } from '../utils/materias';
+
+const materias = getAllMaterias();
+
+// Pre-resolver correlatividades con sus slugs y condiciones requeridas
+const materiasData = materias.map(m => ({
+  slug: m.slug,
+  numero: m.numero,
+  nombre: m.nombre,
+  ano: m.ano,
+  cuatrimestre: m.cuatrimestre,
+  icono: m.icono || '📚',
+  paraCursar: m.paraCursar.map(r => {
+    const res = getSlugForCorrelativa(r, materias);
+    return {
+      raw: r,
+      name: res.name,
+      slug: res.slug || '',
+      requiredStatus: res.status, // 'R' o 'A'
+    };
+  }),
+  paraRendir: m.paraRendir.map(r => {
+    const res = getSlugForCorrelativa(r, materias);
+    return {
+      raw: r,
+      name: res.name,
+      slug: res.slug || '',
+      requiredStatus: res.status, // 'A'
+    };
+  }),
+}));
+
+const years = [
+  { ano: '1', label: '1º Año', subtitle: 'Primer Año de la Licenciatura', materias: materiasData.filter(m => m.ano === '1') },
+  { ano: '2', label: '2º Año', subtitle: 'Segundo Año de la Licenciatura', materias: materiasData.filter(m => m.ano === '2') },
+  { ano: '3', label: '3º Año', subtitle: 'Tercer Año de la Licenciatura', materias: materiasData.filter(m => m.ano === '3') },
+  { ano: '4', label: '4º Año', subtitle: 'Cuarto Año y Prácticas Profesionales', materias: materiasData.filter(m => m.ano === '4') },
+];
+---
+
+<ObsidianLayout
+  title="Simulador de Cursada y Exámenes Finales (Res. 18/13)"
+  description="Herramienta interactiva para calcular qué materias podés cursar y qué exámenes finales podés rendir según tu avance académico en la Licenciatura en Psicopedagogía."
+  breadcrumbs={[
+    { label: 'Régimen de Correlatividades', url: '/correlatividades' },
+    { label: 'Simulador Interactivo' }
+  ]}
+>
+  <div class="simulador-page">
+    <!-- Header Académico -->
+    <header class="sim-header">
+      <div class="sim-header-badge">
+        <span class="badge-pulse"></span>
+        RESOLUCIÓN 18/13 • SIMULADOR INTERACTIVO ACADÉMICO
+      </div>
+      <h1 class="sim-title">Simulador de Cursada y Exámenes Finales</h1>
+      <p class="sim-desc">
+        Marcá tu estado en cada materia (<strong>Pendiente</strong>, <strong>Regularizada</strong> o <strong>Aprobada</strong>).
+        El sistema evaluará automáticamente las 32 cátedras según el régimen oficial de correlatividades, indicándote con exactitud a qué podés anotarte para cursar y qué finales podés rendir.
+      </p>
+    </header>
+
+    <!-- Dashboard de Progreso General -->
+    <section class="sim-dashboard" aria-label="Tablero de progreso general">
+      <div class="dashboard-main-row">
+        <div class="progress-container">
+          <div class="progress-info-row">
+            <span class="progress-label">Progreso de la Carrera</span>
+            <span class="progress-percent" id="stat-percent">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill fill-aprobadas" id="bar-aprobadas" style="width: 0%;" title="Materias Aprobadas"></div>
+            <div class="progress-fill fill-regularizadas" id="bar-regularizadas" style="width: 0%;" title="Materias Regularizadas"></div>
+          </div>
+          <div class="progress-legend">
+            <div class="legend-item"><span class="legend-dot dot-a"></span> Aprobadas: <strong id="legend-a">0/32</strong></div>
+            <div class="legend-item"><span class="legend-dot dot-r"></span> Regularizadas: <strong id="legend-r">0/32</strong></div>
+            <div class="legend-item"><span class="legend-dot dot-p"></span> Pendientes: <strong id="legend-p">32/32</strong></div>
+          </div>
+        </div>
+
+        <div class="quick-kpis">
+          <div class="kpi-card kpi-cursar" id="kpi-card-cursar">
+            <div class="kpi-icon">🚀</div>
+            <div class="kpi-content">
+              <span class="kpi-val" id="stat-can-cursar">7</span>
+              <span class="kpi-title">Habilitadas para Cursar</span>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-rendir" id="kpi-card-rendir">
+            <div class="kpi-icon">🎓</div>
+            <div class="kpi-content">
+              <span class="kpi-val" id="stat-can-rendir">0</span>
+              <span class="kpi-title">Listas para Rendir Final</span>
+            </div>
+          </div>
+
+          <div class="kpi-card kpi-bloqueadas" id="kpi-card-bloqueadas">
+            <div class="kpi-icon">🔒</div>
+            <div class="kpi-content">
+              <span class="kpi-val" id="stat-blocked">25</span>
+              <span class="kpi-title">Bloqueadas por Correlativas</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Toolbar de Acciones Rápidas (Presets) -->
+    <section class="sim-actions-toolbar" aria-label="Acciones rápidas">
+      <div class="toolbar-label">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span>Presets de Avance Rápido:</span>
+      </div>
+      <div class="actions-group">
+        <button type="button" class="preset-btn" id="btn-preset-1" title="Marcar todo 1º Año como Aprobado">
+          🌟 1º Año Aprobado
+        </button>
+        <button type="button" class="preset-btn" id="btn-preset-2" title="Marcar 1º y 2º Año como Aprobados">
+          🌟 1º y 2º Año Aprobados
+        </button>
+        <button type="button" class="preset-btn" id="btn-preset-3" title="Marcar hasta 3º Año como Aprobado">
+          🌟 Hasta 3º Año Aprobado
+        </button>
+        <button type="button" class="preset-btn preset-danger" id="btn-reset" title="Restablecer todas las materias a Pendiente">
+          🧹 Limpiar Todo
+        </button>
+        <button type="button" class="preset-btn preset-print" id="btn-print" title="Imprimir o exportar ficha de cursada">
+          🖨️ Imprimir Ficha
+        </button>
+      </div>
+    </section>
+
+    <!-- Filtros de Visualización y Búsqueda -->
+    <section class="sim-filter-toolbar">
+      <div class="filter-tabs" role="tablist">
+        <button class="filter-tab active" data-filter="all" role="tab" aria-selected="true">
+          Todas las Materias <span class="tab-badge" id="tab-badge-all">32</span>
+        </button>
+        <button class="filter-tab" data-filter="cursar" role="tab" aria-selected="false">
+          🚀 Habilitadas para Cursar <span class="tab-badge" id="tab-badge-cursar">7</span>
+        </button>
+        <button class="filter-tab" data-filter="rendir" role="tab" aria-selected="false">
+          🎓 Listas para Rendir <span class="tab-badge" id="tab-badge-rendir">0</span>
+        </button>
+        <button class="filter-tab" data-filter="bloqueadas" role="tab" aria-selected="false">
+          🔒 Bloqueadas <span class="tab-badge" id="tab-badge-bloqueadas">25</span>
+        </button>
+      </div>
+
+      <div class="sim-search-box">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="sim-search-input" placeholder="Buscar cátedra o correlativa..." aria-label="Buscar cátedra en el simulador" />
+      </div>
+    </section>
+
+    <!-- Lista de Materias por Año -->
+    <div class="sim-years-container" id="sim-years-container">
+      {years.map(year => (
+        <section class="year-block" data-year={year.ano} id={`year-section-${year.ano}`}>
+          <div class="year-block-header">
+            <div class="year-title-group">
+              <span class="year-tag">{year.label}</span>
+              <h2 class="year-heading">{year.subtitle}</h2>
+            </div>
+            <div class="year-stats-badge" id={`year-stats-${year.ano}`}>
+              {year.materias.length} cátedras
+            </div>
+          </div>
+
+          <div class="cards-grid">
+            {year.materias.map(m => (
+              <article
+                class="sim-materia-card"
+                id={`card-${m.slug}`}
+                data-slug={m.slug}
+                data-ano={m.ano}
+                data-nombre={m.nombre.toLowerCase()}
+                data-numero={m.numero}
+                data-status="P"
+              >
+                <!-- Card Header -->
+                <div class="card-head">
+                  <div class="card-num-title">
+                    <span class="card-num">{m.numero}</span>
+                    <span class="card-icon">{m.icono}</span>
+                    <a href={`/m/${m.slug}`} class="card-title-link" title={`Ver ficha de ${m.nombre}`} target="_blank" rel="noopener">
+                      {m.nombre}
+                      <span class="link-ext-icon">↗</span>
+                    </a>
+                  </div>
+                  <span class="card-cuatri-pill">
+                    {m.cuatrimestre === 'anual' ? 'Anual' : `${m.cuatrimestre}º Cuatrimestre`}
+                  </span>
+                </div>
+
+                <!-- 3-Way State Selector -->
+                <div class="status-selector-row">
+                  <span class="selector-label">Mi estado actual:</span>
+                  <div class="segmented-control" role="group" aria-label={`Estado en ${m.nombre}`}>
+                    <button
+                      type="button"
+                      class="segment-btn active"
+                      data-slug={m.slug}
+                      data-set-status="P"
+                      title="Materia aún no regularizada ni aprobada"
+                    >
+                      <span class="segment-bullet bullet-p"></span>
+                      Pendiente
+                    </button>
+                    <button
+                      type="button"
+                      class="segment-btn"
+                      data-slug={m.slug}
+                      data-set-status="R"
+                      title="Cursada regularizada (parciales aprobados)"
+                    >
+                      <span class="segment-bullet bullet-r"></span>
+                      Regular (R)
+                    </button>
+                    <button
+                      type="button"
+                      class="segment-btn"
+                      data-slug={m.slug}
+                      data-set-status="A"
+                      title="Materia aprobada (final o promoción acreditada)"
+                    >
+                      <span class="segment-bullet bullet-a"></span>
+                      Aprobada (A)
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Dynamic Academic Evaluation Banner -->
+                <div class="eval-banner-box" id={`eval-${m.slug}`}>
+                  <!-- Se llena dinámicamente vía JavaScript -->
+                </div>
+
+                <!-- Correlatividades Breakdown -->
+                <details class="correlat-details" open>
+                  <summary class="details-summary">
+                    <span class="details-title">Requisitos Académicos (Res. 18/13)</span>
+                    <span class="details-toggle-icon">▾</span>
+                  </summary>
+
+                  <div class="details-body">
+                    <!-- Requisitos para Cursar -->
+                    <div class="req-section">
+                      <span class="req-type-title">Para Cursar Requiere:</span>
+                      {m.paraCursar.length === 0 ? (
+                        <div class="req-free">
+                          <span class="free-icon">✨</span> Cursada libre (sin correlativas previas)
+                        </div>
+                      ) : (
+                        <ul class="req-list">
+                          {m.paraCursar.map(req => (
+                            <li class="req-item" data-req-slug={req.slug} data-req-type={req.requiredStatus}>
+                              <span class="req-icon">⚪</span>
+                              <span class="req-text">
+                                {req.slug ? (
+                                  <a href={`/m/${req.slug}`} class="req-inline-link" target="_blank" rel="noopener">{req.name}</a>
+                                ) : (
+                                  <span>{req.name}</span>
+                                )}
+                                <span class="req-condition-tag">
+                                  {req.requiredStatus === 'A' ? 'Requiere Aprobada (A)' : 'Requiere Regularizada (R)'}
+                                </span>
+                              </span>
+                              <span class="req-current-state" id={`state-text-${m.slug}-${req.slug}`}>
+                                (Pendiente)
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+
+                    <!-- Requisitos para Rendir Examen Final -->
+                    <div class="req-section">
+                      <span class="req-type-title">Para Rendir Final Requiere:</span>
+                      {m.paraRendir.length === 0 ? (
+                        <div class="req-free">
+                          <span class="free-icon">🎓</span> Solo requiere tener regularizada esta materia
+                        </div>
+                      ) : (
+                        <ul class="req-list">
+                          {m.paraRendir.map(req => (
+                            <li class="req-item" data-req-slug={req.slug} data-req-type="A">
+                              <span class="req-icon">⚪</span>
+                              <span class="req-text">
+                                {req.slug ? (
+                                  <a href={`/m/${req.slug}`} class="req-inline-link" target="_blank" rel="noopener">{req.name}</a>
+                                ) : (
+                                  <span>{req.name}</span>
+                                )}
+                                <span class="req-condition-tag">Requiere Aprobada (A)</span>
+                              </span>
+                              <span class="req-current-state" id={`state-text-rendir-${m.slug}-${req.slug}`}>
+                                (Pendiente)
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </div>
+                </details>
+              </article>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <!-- Empty State cuando la búsqueda o filtro no arroja resultados -->
+    <div class="sim-empty-state" id="sim-empty-state" style="display: none;">
+      <div class="empty-icon">🔍</div>
+      <h3 class="empty-title">No se encontraron materias con el filtro actual</h3>
+      <p class="empty-desc">Probá cambiando el término de búsqueda o seleccionando "Todas las Materias".</p>
+      <button type="button" class="preset-btn" id="empty-clear-btn">Mostrar Todas las Materias</button>
+    </div>
+  </div>
+</ObsidianLayout>
+
+<!-- Definición de datos estáticos y lógica reactiva -->
+<script is:inline define:vars={{ materiasData }}>
+  const STORAGE_KEY = 'psp_simulador_state_v1';
+
+  // Estado reactivo: { [slug]: 'P' | 'R' | 'A' }
+  let userState = {};
+
+  // Inicializar estado desde LocalStorage
+  function loadState() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        userState = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error('Error al cargar estado del simulador:', e);
+      userState = {};
+    }
+
+    // Asegurar que todas las materias tengan un valor inicial 'P' si no existe
+    materiasData.forEach(m => {
+      if (!userState[m.slug] || !['P', 'R', 'A'].includes(userState[m.slug])) {
+        userState[m.slug] = 'P';
+      }
+    });
+  }
+
+  // Guardar en LocalStorage
+  function saveState() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userState));
+    } catch (e) {
+      console.error('Error al guardar estado del simulador:', e);
+    }
+  }
+
+  // Normalizador para búsqueda insensible a acentos
+  function normalizeText(text) {
+    return (text || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
+  // Motor central de cálculo de correlatividades (Resolución 18/13)
+  function evaluateAll() {
+    let countA = 0;
+    let countR = 0;
+    let countP = 0;
+    let countCanCursar = 0;
+    let countCanRendir = 0;
+    let countBlocked = 0;
+
+    // Primer paso: calcular conteos básicos
+    materiasData.forEach(m => {
+      const st = userState[m.slug] || 'P';
+      if (st === 'A') countA++;
+      else if (st === 'R') countR++;
+      else countP++;
+    });
+
+    // Segundo paso: evaluar habilitación para cursar y rendir para cada cátedra
+    materiasData.forEach(m => {
+      const card = document.getElementById('card-' + m.slug);
+      const evalBox = document.getElementById('eval-' + m.slug);
+      if (!card || !evalBox) return;
+
+      const myStatus = userState[m.slug] || 'P';
+      card.setAttribute('data-status', myStatus);
+
+      // Actualizar botones segmentados
+      const buttons = card.querySelectorAll('.segment-btn');
+      buttons.forEach(btn => {
+        const btnVal = btn.getAttribute('data-set-status');
+        if (btnVal === myStatus) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      // 1. Evaluar requisitos para cursar
+      const missingCursar = [];
+      let cursarOk = true;
+
+      m.paraCursar.forEach(req => {
+        const reqState = userState[req.slug] || 'P';
+        let isSatisfied = false;
+
+        if (req.requiredStatus === 'R') {
+          // Requiere regularidad: cumplido si está R o A
+          isSatisfied = reqState === 'R' || reqState === 'A';
+        } else {
+          // Requiere aprobación: cumplido solo si está A
+          isSatisfied = reqState === 'A';
+        }
+
+        if (!isSatisfied) {
+          cursarOk = false;
+          missingCursar.push({
+            name: req.name,
+            required: req.requiredStatus === 'A' ? 'Aprobada' : 'Regularizada',
+            currentState: reqState === 'A' ? 'Aprobada' : reqState === 'R' ? 'Regularizada' : 'Pendiente'
+          });
+        }
+
+        // Actualizar item visual de requisito para cursar
+        const stateTextEl = document.getElementById('state-text-' + m.slug + '-' + req.slug);
+        if (stateTextEl) {
+          stateTextEl.textContent = '(Tu estado: ' + (reqState === 'A' ? 'Aprobada' : reqState === 'R' ? 'Regular' : 'Pendiente') + ')';
+          stateTextEl.className = 'req-current-state state-' + reqState.toLowerCase();
+        }
+      });
+
+      // 2. Evaluar requisitos para rendir final
+      const missingRendir = [];
+      let rendirOk = false;
+
+      // Para rendir final la materia misma debe estar al menos Regularizada o Aprobada
+      const isMateriaRegularizada = myStatus === 'R' || myStatus === 'A';
+
+      if (isMateriaRegularizada) {
+        rendirOk = true;
+        m.paraRendir.forEach(req => {
+          const reqState = userState[req.slug] || 'P';
+          const isSatisfied = reqState === 'A';
+
+          if (!isSatisfied) {
+            rendirOk = false;
+            missingRendir.push({
+              name: req.name,
+              required: 'Aprobada',
+              currentState: reqState === 'A' ? 'Aprobada' : reqState === 'R' ? 'Regularizada' : 'Pendiente'
+            });
+          }
+
+          // Actualizar item visual de requisito para rendir
+          const stateTextRendirEl = document.getElementById('state-text-rendir-' + m.slug + '-' + req.slug);
+          if (stateTextRendirEl) {
+            stateTextRendirEl.textContent = '(Tu estado: ' + (reqState === 'A' ? 'Aprobada' : reqState === 'R' ? 'Regular' : 'Pendiente') + ')';
+            stateTextRendirEl.className = 'req-current-state state-' + reqState.toLowerCase();
+          }
+        });
+      }
+
+      // Actualizar iconos de lista de requisitos (✓ o ✗)
+      const reqListItems = card.querySelectorAll('.req-item');
+      reqListItems.forEach(item => {
+        const rSlug = item.getAttribute('data-req-slug');
+        const rType = item.getAttribute('data-req-type');
+        const rState = userState[rSlug] || 'P';
+        const satisfied = rType === 'R' ? (rState === 'R' || rState === 'A') : (rState === 'A');
+
+        const iconEl = item.querySelector('.req-icon');
+        if (iconEl) {
+          if (satisfied) {
+            iconEl.textContent = '✓';
+            item.classList.add('req-satisfied');
+            item.classList.remove('req-pending');
+          } else {
+            iconEl.textContent = '✗';
+            item.classList.add('req-pending');
+            item.classList.remove('req-satisfied');
+          }
+        }
+      });
+
+      // Flags de clasificación para filtros
+      const canCursar = cursarOk && myStatus !== 'A';
+      const canRendir = isMateriaRegularizada && rendirOk && myStatus !== 'A';
+      const isBlocked = !cursarOk && myStatus === 'P';
+
+      if (canCursar) countCanCursar++;
+      if (canRendir) countCanRendir++;
+      if (isBlocked) countBlocked++;
+
+      card.setAttribute('data-can-cursar', canCursar ? 'true' : 'false');
+      card.setAttribute('data-can-rendir', canRendir ? 'true' : 'false');
+      card.setAttribute('data-blocked', isBlocked ? 'true' : 'false');
+
+      // Construir el HTML del banner evaluativo
+      if (myStatus === 'A') {
+        evalBox.innerHTML = `
+          <div class="eval-badge eval-approved">
+            <span class="eval-icon">✅</span>
+            <div class="eval-text">
+              <strong>Materia Aprobada</strong>
+              <span>¡Felicitaciones! Esta asignatura está acreditada en tu plan de estudios.</span>
+            </div>
+          </div>
+        `;
+      } else {
+        let banners = [];
+
+        // Estado para cursar
+        if (canCursar) {
+          banners.push(`
+            <div class="eval-badge eval-can-cursar">
+              <span class="eval-icon">🚀</span>
+              <div class="eval-text">
+                <strong>Habilitada para Cursar</strong>
+                <span>Cumplís todas las correlativas requeridas para inscribirte.</span>
+              </div>
+            </div>
+          `);
+        } else if (isBlocked) {
+          const missingNames = missingCursar.map(mc => `<strong>${mc.name}</strong> (${mc.required})`).join(', ');
+          banners.push(`
+            <div class="eval-badge eval-locked">
+              <span class="eval-icon">🔒</span>
+              <div class="eval-text">
+                <strong>Bloqueada para Cursar</strong>
+                <span>Falta cumplir: ${missingNames}.</span>
+              </div>
+            </div>
+          `);
+        }
+
+        // Estado para rendir final
+        if (canRendir) {
+          banners.push(`
+            <div class="eval-badge eval-can-rendir">
+              <span class="eval-icon">🎓</span>
+              <div class="eval-text">
+                <strong>Habilitada para Rendir Examen Final</strong>
+                <span>Tenés la regularidad y todos los finales correlativos aprobados.</span>
+              </div>
+            </div>
+          `);
+        } else if (myStatus === 'R') {
+          if (!rendirOk && missingRendir.length > 0) {
+            const missingNames = missingRendir.map(mr => `<strong>${mr.name}</strong> (Aprobada)`).join(', ');
+            banners.push(`
+              <div class="eval-badge eval-locked-rendir">
+                <span class="eval-icon">⏳</span>
+                <div class="eval-text">
+                  <strong>Examen Final Inhabilitado</strong>
+                  <span>Materia regularizada, pero antes debés aprobar los finales de: ${missingNames}.</span>
+                </div>
+              </div>
+            `);
+          }
+        }
+
+        evalBox.innerHTML = banners.join('');
+      }
+    });
+
+    // Actualizar Dashboard & Estadísticas
+    const totalMaterias = materiasData.length; // 32
+    const percentA = Math.round((countA / totalMaterias) * 100);
+    const percentR = Math.round((countR / totalMaterias) * 100);
+
+    const statPercentEl = document.getElementById('stat-percent');
+    if (statPercentEl) statPercentEl.textContent = percentA + '% de la Carrera';
+
+    const barA = document.getElementById('bar-aprobadas');
+    if (barA) barA.style.width = percentA + '%';
+
+    const barR = document.getElementById('bar-regularizadas');
+    if (barR) barR.style.width = percentR + '%';
+
+    const legendA = document.getElementById('legend-a');
+    if (legendA) legendA.textContent = countA + '/' + totalMaterias;
+
+    const legendR = document.getElementById('legend-r');
+    if (legendR) legendR.textContent = countR + '/' + totalMaterias;
+
+    const legendP = document.getElementById('legend-p');
+    if (legendP) legendP.textContent = countP + '/' + totalMaterias;
+
+    // KPIs
+    const statCanCursar = document.getElementById('stat-can-cursar');
+    if (statCanCursar) statCanCursar.textContent = countCanCursar;
+
+    const statCanRendir = document.getElementById('stat-can-rendir');
+    if (statCanRendir) statCanRendir.textContent = countCanRendir;
+
+    const statBlocked = document.getElementById('stat-blocked');
+    if (statBlocked) statBlocked.textContent = countBlocked;
+
+    // Badges en pestañas de filtros
+    const badgeAll = document.getElementById('tab-badge-all');
+    if (badgeAll) badgeAll.textContent = totalMaterias;
+
+    const badgeCursar = document.getElementById('tab-badge-cursar');
+    if (badgeCursar) badgeCursar.textContent = countCanCursar;
+
+    const badgeRendir = document.getElementById('tab-badge-rendir');
+    if (badgeRendir) badgeRendir.textContent = countCanRendir;
+
+    const badgeBloqueadas = document.getElementById('tab-badge-bloqueadas');
+    if (badgeBloqueadas) badgeBloqueadas.textContent = countBlocked;
+
+    // Actualizar mini-stats por año
+    ['1', '2', '3', '4'].forEach(ano => {
+      const yearStatEl = document.getElementById('year-stats-' + ano);
+      if (yearStatEl) {
+        const ms = materiasData.filter(m => m.ano === ano);
+        const yearA = ms.filter(m => userState[m.slug] === 'A').length;
+        yearStatEl.textContent = yearA + '/' + ms.length + ' aprobadas';
+      }
+    });
+
+    // Reaplicar filtros y búsqueda
+    applyFilters();
+  }
+
+  // Filtrado reactivo en vivo
+  let activeFilter = 'all';
+
+  function applyFilters() {
+    const searchVal = normalizeText(document.getElementById('sim-search-input')?.value || '');
+    let totalVisible = 0;
+
+    ['1', '2', '3', '4'].forEach(ano => {
+      const yearSection = document.getElementById('year-section-' + ano);
+      if (!yearSection) return;
+
+      const cards = yearSection.querySelectorAll('.sim-materia-card');
+      let yearVisibleCount = 0;
+
+      cards.forEach(card => {
+        const canCursar = card.getAttribute('data-can-cursar') === 'true';
+        const canRendir = card.getAttribute('data-can-rendir') === 'true';
+        const isBlocked = card.getAttribute('data-blocked') === 'true';
+        const cardName = card.getAttribute('data-nombre') || '';
+        const cardNum = card.getAttribute('data-numero') || '';
+
+        // Comprobación de tab de filtro
+        let matchesTab = true;
+        if (activeFilter === 'cursar') matchesTab = canCursar;
+        else if (activeFilter === 'rendir') matchesTab = canRendir;
+        else if (activeFilter === 'bloqueadas') matchesTab = isBlocked;
+
+        // Comprobación de búsqueda
+        let matchesSearch = true;
+        if (searchVal) {
+          const normName = normalizeText(cardName);
+          matchesSearch = normName.includes(searchVal) || cardNum.includes(searchVal);
+        }
+
+        if (matchesTab && matchesSearch) {
+          card.style.display = '';
+          yearVisibleCount++;
+          totalVisible++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Ocultar bloque de año si no tiene materias visibles
+      if (yearVisibleCount === 0) {
+        yearSection.style.display = 'none';
+      } else {
+        yearSection.style.display = '';
+      }
+    });
+
+    // Estado vacío
+    const emptyState = document.getElementById('sim-empty-state');
+    if (emptyState) {
+      emptyState.style.display = totalVisible === 0 ? 'block' : 'none';
+    }
+  }
+
+  // Configuración de listeners
+  document.addEventListener('DOMContentLoaded', () => {
+    loadState();
+
+    // Delegación de eventos para botones de estado de materias
+    document.getElementById('sim-years-container')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.segment-btn');
+      if (!btn) return;
+
+      const slug = btn.getAttribute('data-slug');
+      const newStatus = btn.getAttribute('data-set-status');
+      if (!slug || !newStatus) return;
+
+      userState[slug] = newStatus;
+      saveState();
+      evaluateAll();
+    });
+
+    // Pestañas de filtros
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+        activeFilter = tab.getAttribute('data-filter') || 'all';
+        applyFilters();
+      });
+    });
+
+    // Buscador
+    const searchInput = document.getElementById('sim-search-input');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        applyFilters();
+      });
+    }
+
+    // Botón para limpiar búsqueda en estado vacío
+    document.getElementById('empty-clear-btn')?.addEventListener('click', () => {
+      if (searchInput) searchInput.value = '';
+      const tabAll = document.querySelector('.filter-tab[data-filter="all"]');
+      if (tabAll) tabAll.click();
+      activeFilter = 'all';
+      applyFilters();
+    });
+
+    // Presets
+    document.getElementById('btn-preset-1')?.addEventListener('click', () => {
+      materiasData.forEach(m => {
+        if (m.ano === '1') userState[m.slug] = 'A';
+      });
+      saveState();
+      evaluateAll();
+    });
+
+    document.getElementById('btn-preset-2')?.addEventListener('click', () => {
+      materiasData.forEach(m => {
+        if (m.ano === '1' || m.ano === '2') userState[m.slug] = 'A';
+      });
+      saveState();
+      evaluateAll();
+    });
+
+    document.getElementById('btn-preset-3')?.addEventListener('click', () => {
+      materiasData.forEach(m => {
+        if (m.ano === '1' || m.ano === '2' || m.ano === '3') userState[m.slug] = 'A';
+      });
+      saveState();
+      evaluateAll();
+    });
+
+    document.getElementById('btn-reset')?.addEventListener('click', () => {
+      if (confirm('¿Deseas reiniciar todas las materias a estado Pendiente?')) {
+        materiasData.forEach(m => {
+          userState[m.slug] = 'P';
+        });
+        saveState();
+        evaluateAll();
+      }
+    });
+
+    document.getElementById('btn-print')?.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Clic en tarjetas de KPI para filtrar rápidamente
+    document.getElementById('kpi-card-cursar')?.addEventListener('click', () => {
+      const tab = document.querySelector('.filter-tab[data-filter="cursar"]');
+      if (tab) tab.click();
+    });
+
+    document.getElementById('kpi-card-rendir')?.addEventListener('click', () => {
+      const tab = document.querySelector('.filter-tab[data-filter="rendir"]');
+      if (tab) tab.click();
+    });
+
+    document.getElementById('kpi-card-bloqueadas')?.addEventListener('click', () => {
+      const tab = document.querySelector('.filter-tab[data-filter="bloqueadas"]');
+      if (tab) tab.click();
+    });
+
+    // Evaluación inicial
+    evaluateAll();
+  });
+</script>
+
+<style>
+  .simulador-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+  }
+
+  /* Header */
+  .sim-header {
+    margin-bottom: 2rem;
+  }
+
+  .sim-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    background: rgba(124, 58, 237, 0.12);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: 9999px;
+    margin-bottom: 0.85rem;
+  }
+
+  .badge-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.7; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.7; }
+  }
+
+  .sim-title {
+    font-size: 2.1rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-normal);
+    margin: 0 0 0.75rem 0;
+    line-height: 1.2;
+  }
+
+  .sim-desc {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-muted);
+    max-width: 860px;
+    margin: 0;
+  }
+
+  /* Dashboard de Progreso */
+  .sim-dashboard {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  .dashboard-main-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .progress-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.65rem;
+  }
+
+  .progress-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .progress-percent {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #10b981;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .progress-track {
+    height: 14px;
+    background: var(--background-primary);
+    border-radius: 9999px;
+    overflow: hidden;
+    display: flex;
+    border: 1px solid var(--border-color);
+    margin-bottom: 0.75rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .fill-aprobadas {
+    background: linear-gradient(90deg, #059669, #10b981);
+  }
+
+  .fill-regularizadas {
+    background: linear-gradient(90deg, #d97706, #f59e0b);
+  }
+
+  .progress-legend {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot-a { background: #10b981; }
+  .dot-r { background: #f59e0b; }
+  .dot-p { background: var(--text-faint); }
+
+  /* KPIs */
+  .quick-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .kpi-card {
+    background: var(--background-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .kpi-icon {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  .kpi-val {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text-normal);
+    font-family: var(--font-mono, monospace);
+  }
+
+  .kpi-cursar .kpi-val { color: #38bdf8; }
+  .kpi-rendir .kpi-val { color: #a855f7; }
+  .kpi-bloqueadas .kpi-val { color: var(--text-muted); }
+
+  .kpi-title {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  /* Toolbar de Presets */
+  .sim-actions-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(22, 27, 34, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .actions-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .preset-btn {
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    border: 1px solid var(--border-color);
+    padding: 0.45rem 0.85rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .preset-btn:hover {
+    background: var(--background-modifier-hover);
+    border-color: var(--accent);
+    color: var(--text-normal);
+  }
+
+  .preset-danger:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+  }
+
+  .preset-print {
+    margin-left: auto;
+  }
+
+  /* Toolbar de Filtros & Búsqueda */
+  .sim-filter-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: var(--background-secondary);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .filter-tab:hover {
+    color: var(--text-normal);
+    border-color: var(--accent);
+  }
+
+  .filter-tab.active {
+    background: var(--accent);
+    color: #ffffff;
+    border-color: var(--accent);
+  }
+
+  .tab-badge {
+    font-size: 0.75rem;
+    padding: 0.1rem 0.45rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.25);
+    font-family: var(--font-mono, monospace);
+  }
+
+  .sim-search-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.45rem 0.85rem;
+    min-width: 260px;
+    color: var(--text-muted);
+  }
+
+  .sim-search-box input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-normal);
+    font-size: 0.85rem;
+    width: 100%;
+  }
+
+  .sim-search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(124, 58, 237, 0.25);
+  }
+
+  /* Bloque de Año */
+  .year-block {
+    margin-bottom: 2.5rem;
+  }
+
+  .year-block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .year-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .year-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    background: var(--accent);
+    color: #fff;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .year-heading {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-normal);
+    margin: 0;
+  }
+
+  .year-stats-badge {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono, monospace);
+  }
+
+  /* Grilla de Tarjetas */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.25rem;
+  }
+
+  /* Tarjeta de Materia */
+  .sim-materia-card {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .sim-materia-card:hover {
+    border-color: rgba(124, 58, 237, 0.4);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Bordes de estado según estado del usuario */
+  .sim-materia-card[data-status="A"] {
+    border-color: rgba(16, 185, 129, 0.4);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.04) 0%, var(--background-secondary) 100%);
+  }
+
+  .sim-materia-card[data-status="R"] {
+    border-color: rgba(245, 158, 11, 0.4);
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.04) 0%, var(--background-secondary) 100%);
+  }
+
+  /* Head de tarjeta */
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .card-num-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .card-num {
+    font-size: 0.75rem;
+    font-weight: 700;
+    font-family: var(--font-mono, monospace);
+    color: var(--accent);
+    background: rgba(124, 58, 237, 0.12);
+    padding: 0.2rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .card-icon {
+    font-size: 1.1rem;
+  }
+
+  .card-title-link {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text-normal);
+    text-decoration: none;
+    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .card-title-link:hover {
+    color: var(--accent);
+  }
+
+  .link-ext-icon {
+    font-size: 0.75rem;
+    color: var(--text-faint);
+  }
+
+  .card-cuatri-pill {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--background-primary);
+    border: 1px solid var(--border-color);
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    white-space: nowrap;
+  }
+
+  /* Selector Segmentado de Estado */
+  .status-selector-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .selector-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .segmented-control {
+    display: flex;
+    background: var(--background-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .segment-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.4rem 0.3rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .segment-btn:hover {
+    color: var(--text-normal);
+    background: var(--background-modifier-hover);
+  }
+
+  .segment-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .bullet-p { background: var(--text-faint); }
+  .bullet-r { background: #f59e0b; }
+  .bullet-a { background: #10b981; }
+
+  /* Estados activos del botón segmentado */
+  .segment-btn.active[data-set-status="P"] {
+    background: var(--background-secondary);
+    color: var(--text-normal);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+
+  .segment-btn.active[data-set-status="R"] {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    font-weight: 700;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.25);
+  }
+
+  .segment-btn.active[data-set-status="A"] {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+    font-weight: 700;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.25);
+  }
+
+  /* Banners Evaluativos Dinámicos */
+  .eval-banner-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .eval-badge {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+  }
+
+  .eval-icon {
+    font-size: 1.1rem;
+    line-height: 1.2;
+  }
+
+  .eval-text strong {
+    display: block;
+    font-size: 0.82rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .eval-text span {
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .eval-approved {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #a7f3d0;
+  }
+  .eval-approved strong { color: #34d399; }
+
+  .eval-can-cursar {
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    color: #bae6fd;
+  }
+  .eval-can-cursar strong { color: #38bdf8; }
+
+  .eval-can-rendir {
+    background: rgba(168, 85, 247, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #e9d5ff;
+  }
+  .eval-can-rendir strong { color: #c084fc; }
+
+  .eval-locked {
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #fca5a5;
+  }
+  .eval-locked strong { color: #f87171; }
+
+  .eval-locked-rendir {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    color: #fde68a;
+  }
+  .eval-locked-rendir strong { color: #fbbf24; }
+
+  /* Desglose de Correlatividades */
+  .correlat-details {
+    background: var(--background-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .details-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+  }
+
+  .details-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .details-toggle-icon {
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+  }
+
+  .correlat-details[open] .details-toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .details-body {
+    padding: 0.5rem 0.75rem 0.75rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .req-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .req-type-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .req-free {
+    font-size: 0.75rem;
+    color: #10b981;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .req-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .req-item {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.4rem;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .req-icon {
+    font-size: 0.75rem;
+    font-weight: 800;
+    width: 14px;
+    text-align: center;
+  }
+
+  .req-satisfied .req-icon { color: #10b981; }
+  .req-pending .req-icon { color: #ef4444; }
+
+  .req-text {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+    color: var(--text-normal);
+  }
+
+  .req-inline-link {
+    color: var(--text-normal);
+    text-decoration: underline;
+    text-decoration-color: var(--border-color);
+  }
+
+  .req-inline-link:hover {
+    color: var(--accent);
+  }
+
+  .req-condition-tag {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    background: var(--background-secondary);
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+  }
+
+  .req-current-state {
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: var(--font-mono, monospace);
+  }
+
+  .state-a { color: #10b981; }
+  .state-r { color: #f59e0b; }
+  .state-p { color: var(--text-faint); }
+
+  /* Estado Vacío */
+  .sim-empty-state {
+    text-align: center;
+    padding: 4rem 1.5rem;
+    background: var(--background-secondary);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
+    margin: 2rem 0;
+  }
+
+  .empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .empty-title {
+    font-size: 1.25rem;
+    color: var(--text-normal);
+    margin: 0 0 0.5rem;
+  }
+
+  .empty-desc {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0 0 1.5rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .dashboard-main-row {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    .quick-kpis {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .sim-title {
+      font-size: 1.6rem;
+    }
+    .cards-grid {
+      grid-template-columns: 1fr;
+    }
+    .sim-filter-toolbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .sim-search-box {
+      min-width: unset;
+      width: 100%;
+    }
+    .actions-group {
+      width: 100%;
+    }
+    .preset-print {
+      margin-left: 0;
+    }
+  }
+
+  /* Modo Impresión */
+  @media print {
+    :global(.vault-topbar),
+    :global(#obsidian-sidebar),
+    :global(.sidebar-ribbon),
+    .sim-actions-toolbar,
+    .sim-filter-toolbar,
+    .status-selector-row {
+      display: none !important;
+    }
+
+    .simulador-page {
+      padding: 0;
+      max-width: 100%;
+    }
+
+    .sim-dashboard {
+      border: 1px solid #ccc;
+      box-shadow: none;
+      background: #fff;
+      color: #000;
+    }
+
+    .cards-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+    }
+
+    .sim-materia-card {
+      border: 1px solid #ddd;
+      page-break-inside: avoid;
+      background: #fff !important;
+      color: #000 !important;
+    }
+
+    .card-title-link, .year-heading {
+      color: #000 !important;
+    }
+  }
+</style>

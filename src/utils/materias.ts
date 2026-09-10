@@ -79,7 +79,7 @@ export function getSlugForCorrelativa(text: string, allMaterias: Materia[]): { s
   let status: 'R' | 'A' = 'R';
   if (text.includes('(Aprobada)') || text.includes('(A)')) status = 'A';
 
-  // Normalize clean name
+  // Normalize clean name and handle abbreviations
   const cleanName = text
     .replace(/\(Regularizada\)/gi, '')
     .replace(/\(Aprobada\)/gi, '')
@@ -88,10 +88,18 @@ export function getSlugForCorrelativa(text: string, allMaterias: Materia[]): { s
     .replace(/\./g, '')
     .trim();
 
+  const normalizeStr = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/sist\./g, 'sistema')
+      .replace(/sist /g, 'sistema ')
+      .replace(/\./g, '')
+      .trim();
+
   // Find fuzzy match
   const found = allMaterias.find(m => {
-    const mClean = m.nombre.toLowerCase().replace(/\./g, '');
-    const cClean = cleanName.toLowerCase();
+    const mClean = normalizeStr(m.nombre);
+    const cClean = normalizeStr(cleanName);
     return mClean.includes(cClean) || cClean.includes(mClean);
   });
 

@@ -38,6 +38,7 @@ const materias = getAllMaterias().map(m => ({
     <!-- Quick Filter Tags (Estilo Obsidian) -->
     <div class="search-options-bar">
       <span class="options-title">Filtros rápidos:</span>
+      <button class="filter-chip" data-filter="simulador">🎯 Simulador</button>
       <button class="filter-chip" data-filter="ano:1">1º Año</button>
       <button class="filter-chip" data-filter="ano:2">2º Año</button>
       <button class="filter-chip" data-filter="ano:3">3º Año</button>
@@ -62,6 +63,10 @@ const materias = getAllMaterias().map(m => ({
           <span>Sugerencias de búsqueda</span>
         </div>
         <ul class="history-list">
+          <li class="history-item" data-query="Simulador">
+            <span class="history-icon">🎯</span>
+            <span class="history-text">Simulador de Cursada y Finales</span>
+          </li>
           <li class="history-item" data-query="Evolutiva">
             <span class="history-icon">🕒</span>
             <span class="history-text">Psicología Evolutiva</span>
@@ -171,7 +176,7 @@ const materias = getAllMaterias().map(m => ({
     resultsList.style.display = 'block';
 
     resultsList.innerHTML = list.map((m, idx) => `
-      <li class="search-result-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}" data-slug="${m.slug}">
+      <li class="search-result-item ${idx === 0 ? 'selected' : ''}" data-index="${idx}" data-slug="${m.slug}" data-url="${m.url || ''}">
         <div class="result-top">
           <span class="result-badge">${m.numero}</span>
           <span class="result-title">${m.nombre}</span>
@@ -195,8 +200,13 @@ const materias = getAllMaterias().map(m => ({
     // Attach click events
     resultsList.querySelectorAll('.search-result-item').forEach(el => {
       el.addEventListener('click', () => {
+        const url = el.getAttribute('data-url');
         const slug = el.getAttribute('data-slug');
-        window.location.href = `/m/${slug}`;
+        if (url) {
+          window.location.href = url;
+        } else {
+          window.location.href = `/m/${slug}`;
+        }
       });
     });
   }
@@ -262,6 +272,22 @@ const materias = getAllMaterias().map(m => ({
       return { ...m, matchContext };
     });
 
+    const simKeywords = ['simulador', 'cursar', 'rendir', 'finales', 'final', 'regular'];
+    if (simKeywords.some(kw => q.includes(kw) || kw.includes(q))) {
+      filtered.unshift({
+        slug: 'simulador',
+        url: '/simulador',
+        numero: '🎯',
+        nombre: 'Simulador de Cursada y Finales (Res. 18/13)',
+        ano: 'Plan',
+        cuatrimestre: '18/13',
+        descripcion: 'Calculá en tiempo real qué cátedras podés cursar y qué exámenes podés rendir según tus materias regularizadas y aprobadas.',
+        matchContext: 'Herramienta interactiva de correlatividades',
+        paraCursar: [],
+        paraRendir: []
+      });
+    }
+
     renderResults(filtered);
   }
 
@@ -285,8 +311,13 @@ const materias = getAllMaterias().map(m => ({
       }
     } else if (e.key === 'Enter') {
       e.preventDefault();
-      if (currentResults[selectedIndex]) {
-        window.location.href = `/m/${currentResults[selectedIndex].slug}`;
+      const sel = currentResults[selectedIndex];
+      if (sel) {
+        if (sel.url) {
+          window.location.href = sel.url;
+        } else {
+          window.location.href = `/m/${sel.slug}`;
+        }
       }
     }
   });
